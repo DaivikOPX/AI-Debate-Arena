@@ -50,7 +50,14 @@ Your API credentials are handled with the highest security standards:
 
 ## 🛠️ Quick Start
 
-### 1. Run the App Locally
+### 1. Clone the Repository
+Clone the codebase to your local machine and navigate into the project folder:
+```bash
+git clone https://github.com/DaivikOPX/AI-Debate-Arena.git
+cd AI-Debate-Arena
+```
+
+### 2. Run the App Locally
 Because modern browsers enforce strict CORS policies on local modules and direct API calls, the app must be run through a local web server (instead of double-clicking the `index.html` file).
 
 **Using Python**:
