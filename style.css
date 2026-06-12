@@ -566,7 +566,7 @@ label {
 }
 
 /* Glassmorphic frosted form inputs */
-select, input, textarea {
+select, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea {
   width: 100%;
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -579,7 +579,7 @@ select, input, textarea {
   backdrop-filter: blur(12px);
 }
 
-select:focus, input:focus, textarea:focus {
+select:focus, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus, textarea:focus {
   outline: none;
   border-color: var(--color-pro);
   background: rgba(0, 0, 0, 0.55);
@@ -587,8 +587,55 @@ select:focus, input:focus, textarea:focus {
   animation: focusRingExpand 0.3s ease forwards;
 }
 
-select:hover, input:hover, textarea:hover {
+select:hover, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):hover, textarea:hover {
   border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Custom cybernetic checkboxes */
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px !important;
+  height: 18px !important;
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  transition: all 0.2s ease;
+  margin: 0;
+  padding: 0 !important;
+  flex-shrink: 0;
+}
+
+input[type="checkbox"]:hover:not(:disabled) {
+  border-color: var(--color-pro);
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.2);
+}
+
+input[type="checkbox"]:checked {
+  background: var(--color-pro);
+  border-color: var(--color-pro);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+}
+
+input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  color: #020617;
+  font-size: 12px;
+  font-weight: 900;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+input[type="checkbox"]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 textarea {
@@ -2344,7 +2391,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     font-size: 0.85rem;
   }
 
-  select, input, textarea {
+  select, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea {
     font-size: 0.85rem;
     padding: 0.55rem;
   }
