@@ -2630,11 +2630,67 @@ body.debate-active .sidebar {
   overflow: hidden !important;
 }
 
-#btn-toggle-sidebar.active {
-  background: rgba(0, 242, 254, 0.15) !important;
-  border-color: rgba(0, 242, 254, 0.6) !important;
-  color: #fff !important;
-  box-shadow: 0 0 15px rgba(0, 242, 254, 0.3) !important;
+/* Custom Floating Sidebar Collapse Button */
+.sidebar-collapse-btn {
+  position: absolute;
+  top: 1.5rem;
+  left: 366px; /* Centered on the 380px sidebar right border: 380px - (28px width / 2) */
+  z-index: 99;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #090d16;
+  border: 1px solid var(--border-color);
+  color: var(--color-pro);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 242, 254, 0.05);
+  transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s ease,
+              border-color 0.3s ease,
+              box-shadow 0.3s ease,
+              color 0.3s ease;
+}
+
+.sidebar-collapse-btn:hover {
+  background: #0f172a;
+  border-color: var(--color-pro);
+  color: #fff;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.4), 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar-collapse-btn:active {
+  transform: scale(0.92);
+}
+
+.sidebar-collapse-btn svg {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Position and icon state when sidebar is collapsed */
+.app-container.sidebar-collapsed .sidebar-collapse-btn {
+  left: 14px; /* Centered near the left screen edge */
+  border-color: var(--color-con);
+  color: var(--color-con);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 0, 127, 0.05);
+}
+
+.app-container.sidebar-collapsed .sidebar-collapse-btn:hover {
+  border-color: var(--color-con);
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+}
+
+.app-container.sidebar-collapsed .sidebar-collapse-btn svg {
+  transform: rotate(180deg);
+}
+
+/* Hide on mobile stacks */
+@media (max-width: 950px) {
+  .sidebar-collapse-btn {
+    display: none !important;
+  }
 }
 
 

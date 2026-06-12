@@ -120,10 +120,16 @@ function setupEventListeners() {
     });
   }
 
-  elements.inputRounds.addEventListener('input', (e) => {
-    elements.valRounds.textContent = e.target.value;
-    updateUIForState();
-  });
+  if (elements.inputRounds) {
+    const updateRoundsText = () => {
+      if (elements.valRounds) {
+        elements.valRounds.textContent = elements.inputRounds.value;
+      }
+      updateUIForState();
+    };
+    elements.inputRounds.addEventListener('input', updateRoundsText);
+    elements.inputRounds.addEventListener('change', updateRoundsText);
+  }
   
   elements.checkModEnabled.addEventListener('change', (e) => {
     debateState.moderator.enabled = e.target.checked;
