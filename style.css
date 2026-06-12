@@ -448,27 +448,20 @@ header {
 }
 
 
-/* ─── Section 6: App Main Grid Layout ─────────────────────────── */
+/* ─── Section 6: App Main Layout ─────────────────────────── */
 .app-container {
-  display: grid;
-  grid-template-columns: 380px 1fr;
+  display: flex;
   flex: 1;
   height: calc(100vh - 76px); /* adjusted for top bar + header */
   overflow: hidden;
   position: relative;
   z-index: 1;
-  transition: grid-template-columns 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-.app-container.sidebar-collapsed {
-  grid-template-columns: 0px 1fr;
-}
-
 
 /* ─── Section 7: Sidebar — Settings Dashboard ─────────────────── */
 .sidebar {
-  grid-column: 1;
-  grid-row: 1;
+  width: 380px;
+  min-width: 380px;
   background: rgba(8, 12, 24, 0.5);
   border-right: 1px solid var(--border-color);
   padding: 1.5rem;
@@ -479,21 +472,22 @@ header {
   backdrop-filter: blur(12px);
   position: relative;
   z-index: 2;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              min-width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              border-right-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+              padding 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: left;
 }
 
 .app-container.sidebar-collapsed .sidebar {
+  width: 0 !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  border-right-width: 0 !important;
   transform: translateX(-100%);
   opacity: 0;
   pointer-events: none;
-  width: 0;
-  padding: 0;
-  border-right-width: 0;
   overflow: hidden;
 }
 
@@ -935,14 +929,14 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* ─── Section 14: Arena View (Right Panel) ─────────────────────── */
 .arena-view {
-  grid-column: 2;
-  grid-row: 1;
   display: grid;
   grid-template-rows: auto 1fr auto;
   height: 100%;
   overflow: hidden;
   position: relative;
   z-index: 1;
+  flex: 1;
+  min-width: 0;
 }
 
 
@@ -2637,8 +2631,8 @@ body.debate-active .sidebar {
 /* Custom Floating Sidebar Collapse Button */
 .sidebar-collapse-btn {
   position: absolute;
-  top: 2.25rem;
-  left: 335px; /* Placed inside the top-right of the 380px wide sidebar */
+  top: 1.5rem;
+  left: 336px; /* Inside the sidebar top-right, aligned with right margin */
   z-index: 99;
   width: 28px;
   height: 28px;
