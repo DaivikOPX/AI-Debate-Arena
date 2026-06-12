@@ -1,25 +1,30 @@
-# ⚔️ AI Debate Arena
+# AI Debate Arena ⚔️🗣️
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![Platform](https://img.shields.io/badge/platform-browser-blue.svg)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+> A Premium, Local-First Multi-Agent Debate Simulator & Cinematic Simulation Arena.
 
-A premium, local-first multi-agent debate simulator. Configure up to 6 AI models across two teams (Affirmative vs Negative), customize moderation rules, enable private strategy discussions, and watch them face off in real-time, evaluated by a neutral AI judge.
-
-Features a beautiful, custom WebGL `<SideRays />` cinematic atmosphere that runs 100% locally and offline.
+AI Debate Arena is an ultra-premium Single Page Application (SPA) designed to let you watch up to 6 AI models debate each other in real-time. Built with a dark, esports-inspired design language, powered by an offline-capable WebGL `<SideRays />` background engine, and supporting direct browser-to-LLM integration across 10 API providers, it acts as a neutral simulation environment right in your browser.
 
 ---
 
-## 🚀 Key Features
+## ⚡ Core Features
 
-*   **Up to 6 Simultaneous Agents**: Create complex team matchups (e.g., 3v3, 2v2, 1v1).
-*   **WebGL Atmospheric Background**: Smooth, animated golden-and-blue moving light rays overlaying a pure black canvas, powered locally by a custom-integrated `ogl.js` engine.
-*   **Teammate Defense**: Agents automatically defend team members, build upon their arguments, and avoid contradictions.
-*   **Private Team Strategy Sessions**: Optional round-end private discussions where team members coordinate tactics (completely hidden from opponent models).
-*   **10 Integrated LLM Providers**: Google Gemini, OpenAI, Anthropic, OpenRouter, Groq, xAI Grok, DeepSeek, Hugging Face, Qwen, and Ollama (Local).
-*   **Interactive Onboarding**: Step-by-step guided checklist on startup to configure topics, models, and credentials.
-*   **Esports-Inspired UI**: Beautiful glassmorphic design, live speaking pod highlights (holographic spinning avatar rings), and interactive "theater mode" dimming effect on non-speaking pods.
-*   **Markdown Export**: Download complete debate transcripts, structured arguments, and the final scorecard verdict.
+### 1. Cinematic Esports Viewport & Atmosphere
+*   **SideRays WebGL Background:** Smooth, moving gold-and-blue light rays overlaying a pure black backdrop, powered locally by a custom-integrated offline `ogl.js` engine.
+*   **Esports Stage Pods:** Symmetrical portrait layouts for debaters, featuring rotating holographic conic-gradient borders on active speaker cards.
+*   **Theater Mode Dimming:** Non-speaking player cards automatically dim, blur, and scale down, keeping visual focus centered around the active speaker.
+*   **Victory Scorecard & Confetti:** Neutral AI judge synthesizes a final structured scorecard with a dynamic confetti victory trigger.
+
+### 2. Symmetrical Matchup Console & Rules
+*   **Up to 6 Simultaneous Agents:** Configure team faceoffs (1v1, 2v2, 3v3) with customizable models, temperatures, and custom system personas.
+*   **Teammate Defense & Cooperation:** Models automatically support their teammates' arguments, avoid internal contradictions, and counter opponent positions.
+*   **Private Team Strategy Sessions:** Optional round-end private discussions where team members coordinate tactics (completely hidden from opponent models).
+*   **Presets Library:** Instantly load preset topics and premises (e.g. *AI Consciousness*, *Universal Basic Income*).
+
+### 3. Local-First Security & Integrations
+*   **10 LLM Providers:** Google Gemini, OpenAI, Anthropic, OpenRouter, Groq, xAI Grok, DeepSeek, Hugging Face, Qwen, and Ollama (Local).
+*   **localStorage Key Sandbox:** Keys are saved strictly in your browser's local sandbox and sent directly to provider APIs—zero middleman servers.
+*   **Interactive Onboarding Stepper:** Progressive 3-step startup wizard that checks setup parameters (Topic, Model Configs, Credentials) reactively.
+*   **Markdown Export:** Download complete debate transcripts, structured arguments, and the final scorecard verdict.
 
 ---
 
@@ -72,14 +77,14 @@ npx serve
 
 Open your browser to **`http://localhost:8000`**.
 
-### 2. Configure Settings
+### 3. Configure Settings
 1.  Click the **⚙️ Settings** button in the header.
 2.  Input your API key for your chosen provider.
 3.  Add/remove AI debaters, assign their models, teams, and temperatures.
 4.  Set optional system instructions or select a pre-made persona preset (e.g. *Socratic Inquirer*, *Techno-Optimist*).
 5.  Click **Save Settings**.
 
-### 3. Initiate Debate
+### 4. Initiate Debate
 1.  Fill in a **Title** and **Premise** in the sidebar topic card.
 2.  Choose your **Moderator Style** and **Rounds per model**.
 3.  Click **Start Debate** to watch the faceoff!
