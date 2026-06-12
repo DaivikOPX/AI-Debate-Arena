@@ -219,7 +219,6 @@ const DEBATE_PRESETS = {
       { id: "google/gemini-2.5-flash", name: "Gemini 2.5 Flash (OpenRouter)" },
       { id: "google/gemini-2.5-pro", name: "Gemini 2.5 Pro (OpenRouter)" },
       { id: "meta-llama/llama-3.3-70b-instruct", name: "Llama 3.3 70B (OpenRouter)" },
-      { id: "deepseek/deepseek-chat", name: "DeepSeek Chat (OpenRouter)" },
       { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet (OpenRouter)" },
       { id: "openai/gpt-4o", name: "GPT-4o (OpenRouter)" },
       { id: "custom", name: "[Custom Model Identifier...]" }
@@ -232,8 +231,6 @@ const DEBATE_PRESETS = {
     ],
     huggingface: [
       { id: "meta-llama/Llama-3.3-70B-Instruct", name: "Llama 3.3 70B Instruct" },
-      { id: "Qwen/Qwen2.5-72B-Instruct", name: "Qwen 2.5 72B Instruct" },
-      { id: "deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", name: "DeepSeek R1 Distill Qwen 32B" },
       { id: "mistralai/Mistral-Nemo-Instruct-2407", name: "Mistral Nemo 24B Instruct" },
       { id: "custom", name: "[Custom Model Identifier...]" }
     ],
@@ -241,7 +238,6 @@ const DEBATE_PRESETS = {
       { id: "llama3.3", name: "Llama 3.3" },
       { id: "llama3", name: "Llama 3" },
       { id: "gemma2", name: "Gemma 2" },
-      { id: "deepseek-r1", name: "DeepSeek R1" },
       { id: "custom", name: "[Custom Model Identifier...]" }
     ],
     grok: [
@@ -252,18 +248,6 @@ const DEBATE_PRESETS = {
     groq: [
       { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B (Groq)" },
       { id: "llama-3.1-8b-instant", name: "Llama 3.1 8B (Groq)" },
-      { id: "deepseek-r1-distill-70b", name: "DeepSeek R1 Distill 70B (Groq)" },
-      { id: "custom", name: "[Custom Model Identifier...]" }
-    ],
-    qwen: [
-      { id: "qwen-turbo", name: "Qwen Turbo" },
-      { id: "qwen-plus", name: "Qwen Plus" },
-      { id: "qwen-max", name: "Qwen Max" },
-      { id: "custom", name: "[Custom Model Identifier...]" }
-    ],
-    deepseek: [
-      { id: "deepseek-chat", name: "DeepSeek V3 / Chat" },
-      { id: "deepseek-reasoner", name: "DeepSeek R1 / Reasoner" },
       { id: "custom", name: "[Custom Model Identifier...]" }
     ]
   },

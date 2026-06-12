@@ -418,8 +418,6 @@ function renderSettingsModal() {
     { id: 'huggingface', name: 'Hugging Face' },
     { id: 'grok', name: 'Grok (xAI)' },
     { id: 'groq', name: 'Groq' },
-    { id: 'qwen', name: 'Qwen' },
-    { id: 'deepseek', name: 'DeepSeek' },
     { id: 'ollama', name: 'Ollama (Local)' }
   ];
 
@@ -1783,10 +1781,6 @@ Provide a clear and direct answer to this question.`;
       return await makeGrokRequest(model, systemPrompt, contextPrompt, temp, apiKey);
     case 'groq':
       return await makeGroqRequest(model, systemPrompt, contextPrompt, temp, apiKey);
-    case 'qwen':
-      return await makeQwenRequest(model, systemPrompt, contextPrompt, temp, apiKey);
-    case 'deepseek':
-      return await makeDeepSeekRequest(model, systemPrompt, contextPrompt, temp, apiKey);
     case 'ollama':
       return await makeOllamaRequest(model, systemPrompt, contextPrompt, temp);
     default:
@@ -1848,10 +1842,6 @@ CRITICAL: Analyze the entire debate transcript carefully. In your summary evalua
     resultString = await makeGrokRequest(model, systemPrompt, contextPrompt, 0.2, apiKey);
   } else if (provider === 'groq') {
     resultString = await makeGroqRequest(model, systemPrompt, contextPrompt, 0.2, apiKey);
-  } else if (provider === 'qwen') {
-    resultString = await makeQwenRequest(model, systemPrompt, contextPrompt, 0.2, apiKey);
-  } else if (provider === 'deepseek') {
-    resultString = await makeDeepSeekRequest(model, systemPrompt, contextPrompt, 0.2, apiKey);
   } else if (provider === 'ollama') {
     resultString = await makeOllamaRequest(model, systemPrompt, contextPrompt, 0.2);
   }
@@ -2031,16 +2021,6 @@ async function makeGrokRequest(model, systemPrompt, userPrompt, temperature, api
 async function makeGroqRequest(model, systemPrompt, userPrompt, temperature, apiKey) {
   if (!apiKey) throw new Error("Groq API Key is missing. Click 'Settings' in the header to configure.");
   return await makeOpenAICompatibleRequest("https://api.groq.com/openai/v1/chat/completions", model, apiKey, systemPrompt, userPrompt, temperature);
-}
-
-async function makeQwenRequest(model, systemPrompt, userPrompt, temperature, apiKey) {
-  if (!apiKey) throw new Error("Qwen (DashScope) Key is missing. Click 'Settings' in the header to configure.");
-  return await makeOpenAICompatibleRequest("https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", model, apiKey, systemPrompt, userPrompt, temperature);
-}
-
-async function makeDeepSeekRequest(model, systemPrompt, userPrompt, temperature, apiKey) {
-  if (!apiKey) throw new Error("DeepSeek API Key is missing. Click 'Settings' in the header to configure.");
-  return await makeOpenAICompatibleRequest("https://api.deepseek.com/v1/chat/completions", model, apiKey, systemPrompt, userPrompt, temperature);
 }
 
 async function makeOllamaRequest(model, systemPrompt, userPrompt, temperature) {

@@ -2,7 +2,7 @@
 
 > A Premium, Local-First Multi-Agent Debate Simulator & Cinematic Simulation Arena.
 
-AI Debate Arena is an ultra-premium Single Page Application (SPA) designed to let you watch up to 6 AI models debate each other in real-time. Built with a dark, esports-inspired design language, powered by an offline-capable WebGL `<SideRays />` background engine, and supporting direct browser-to-LLM integration across 10 API providers, it acts as a neutral simulation environment right in your browser.
+AI Debate Arena is an ultra-premium Single Page Application (SPA) designed to let you watch up to 6 AI models debate each other in real-time. Built with a dark, esports-inspired design language, powered by an offline-capable WebGL `<SideRays />` background engine, and supporting direct browser-to-LLM integration across 8 API providers, it acts as a neutral simulation environment right in your browser.
 
 ---
 
@@ -21,7 +21,7 @@ AI Debate Arena is an ultra-premium Single Page Application (SPA) designed to le
 *   **Presets Library:** Instantly load preset topics and premises (e.g. *AI Consciousness*, *Universal Basic Income*).
 
 ### 3. Local-First Security & Integrations
-*   **10 LLM Providers:** Google Gemini, OpenAI, Anthropic, OpenRouter, Groq, xAI Grok, DeepSeek, Hugging Face, Qwen, and Ollama (Local).
+*   **8 LLM Providers:** Google Gemini, OpenAI, Anthropic, OpenRouter, Groq, xAI Grok, Hugging Face, and Ollama (Local).
 *   **localStorage Key Sandbox:** Keys are saved strictly in your browser's local sandbox and sent directly to provider APIs—zero middleman servers.
 *   **Interactive Onboarding Stepper:** Progressive 3-step startup wizard that checks setup parameters (Topic, Model Configs, Credentials) reactively.
 *   **Markdown Export:** Download complete debate transcripts, structured arguments, and the final scorecard verdict.
