@@ -32,6 +32,7 @@ let debateState = {
     apiKey: ""
   },
   teamDiscussionEnabled: false,
+  roastEnabled: false,
   ollamaHost: "http://localhost:11434",
   debateMode: "medium",
   abortController: null // AbortController to cancel ongoing fetches
@@ -102,6 +103,7 @@ function initApp() {
     btnModalAddDebater: document.getElementById('btn-modal-add-debater'),
     
     checkModEnabled: document.getElementById('check-mod-enabled'),
+    checkRoastEnabled: document.getElementById('check-roast-enabled'),
     checkDiscussionEnabled: document.getElementById('check-discussion-enabled'),
     grpTeamDiscussion: document.getElementById('grp-team-discussion'),
     
@@ -130,6 +132,7 @@ function initApp() {
   initializePresets();
   loadModeratorFromStorage();
   loadDebateModeFromStorage();
+  loadRoastModeFromStorage();
   loadTeamDiscussionFromStorage();
   setupEventListeners();
   updateUIForState();
@@ -149,6 +152,29 @@ function loadTeamDiscussionFromStorage() {
     const saved = localStorage.getItem('ai_debate_team_discussion_enabled');
     if (saved !== null && elements.checkDiscussionEnabled) {
       elements.checkDiscussionEnabled.checked = saved === 'true';
+    }
+  } catch (e) {
+    console.warn("Storage access restricted:", e);
+  }
+}
+
+function saveRoastModeToStorage() {
+  try {
+    const isEnabled = elements.checkRoastEnabled ? elements.checkRoastEnabled.checked : false;
+    localStorage.setItem('ai_debate_roast_enabled', isEnabled ? 'true' : 'false');
+  } catch (e) {
+    console.warn("Storage writing restricted:", e);
+  }
+}
+
+function loadRoastModeFromStorage() {
+  try {
+    const saved = localStorage.getItem('ai_debate_roast_enabled');
+    if (saved !== null) {
+      debateState.roastEnabled = saved === 'true';
+      if (elements.checkRoastEnabled) {
+        elements.checkRoastEnabled.checked = debateState.roastEnabled;
+      }
     }
   } catch (e) {
     console.warn("Storage access restricted:", e);
@@ -803,6 +829,15 @@ function setupEventListeners() {
     saveModeratorToStorage();
     updateUIForState();
   });
+
+  // Roasting Mode toggle
+  if (elements.checkRoastEnabled) {
+    elements.checkRoastEnabled.addEventListener('change', (e) => {
+      debateState.roastEnabled = e.target.checked;
+      saveRoastModeToStorage();
+      updateUIForState();
+    });
+  }
 
   // Team discussion toggle
   if (elements.checkDiscussionEnabled) {
@@ -1648,6 +1683,14 @@ Discuss:
 CRITICAL: Keep your response relatively concise (1-2 paragraphs). Speak directly to your teammates as a colleague on their team (e.g. using "we", "our", "let's"). Remember, this is a private strategy discussion, so do not address the moderator, the judge, or the opponents.`);
     }
     
+    // Inject Roasting Mode Directive if enabled
+    if (debateState.roastEnabled) {
+      systemPromptParts.push(`ROASTING MODE IS ACTIVE:
+- You are encouraged to mock, roast, and satirize the opposing team's arguments, logic, and word choice in a witty, sharp, and savage manner.
+- If the opposition has roasted you in previous turns, you MUST defend yourself and counter-attack directly on their roasts.
+- If teammate discussion is allowed, cooperate with your teammates, refer to their points, and defend them from the opposition's roasts.`);
+    }
+
     // Add specific instruction depending on phase
     if (step.isRebuttal) {
       if (step.rebuttalPhase === 'ask') {
@@ -2442,6 +2485,9 @@ function updateUIForState() {
   document.querySelectorAll('.btn-remove-debater').forEach(el => el.disabled = disableForm);
   
   elements.checkModEnabled.disabled = disableForm;
+  if (elements.checkRoastEnabled) {
+    elements.checkRoastEnabled.disabled = disableForm;
+  }
   if (elements.selectDebateMode) {
     elements.selectDebateMode.disabled = disableForm;
   }
@@ -2518,10 +2564,13 @@ function updateUIForState() {
     const debateModeText = elements.selectDebateMode ? elements.selectDebateMode.options[elements.selectDebateMode.selectedIndex]?.text : "Standard";
     const discEnabled = elements.checkDiscussionEnabled && elements.checkDiscussionEnabled.checked;
     
+    const roastEnabled = elements.checkRoastEnabled && elements.checkRoastEnabled.checked;
+    
     let summaryHtml = `<div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; color: var(--text-muted);">`;
     summaryHtml += `<div>Debate Mode: <strong style="color: var(--text-main);">${debateModeText}</strong></div>`;
     summaryHtml += `<div>Rounds Per Debater: <strong style="color: var(--text-main); font-family: var(--font-mono);">${rounds}</strong></div>`;
     summaryHtml += `<div>AI Moderator & Judge: <strong style="color: var(--text-main);">${modEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
+    summaryHtml += `<div>Roasting Mode: <strong style="color: var(--text-main);">${roastEnabled ? '🔥 Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Team Discussion: <strong style="color: var(--text-main);">${discEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `</div>`;
     displayRulesSummary.innerHTML = summaryHtml;
