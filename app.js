@@ -33,8 +33,7 @@ let debateState = {
   },
   teamDiscussionEnabled: false,
   ollamaHost: "http://localhost:11434",
-  rulePreset: "classic-arena",
-  debateMode: "formal",
+  debateMode: "medium",
   abortController: null // AbortController to cancel ongoing fetches
 };
 
@@ -97,15 +96,12 @@ function initApp() {
   // Populate DOM elements lookup dynamically when DOM is guaranteed ready
   elements = {
     selectPreset: document.getElementById('select-preset'),
-    selectRulePreset: document.getElementById('select-rule-preset'),
     selectDebateMode: document.getElementById('select-debate-mode'),
     inputTopicTitle: document.getElementById('input-topic-title'),
     inputTopicDesc: document.getElementById('input-topic-desc'),
     btnModalAddDebater: document.getElementById('btn-modal-add-debater'),
     
     checkModEnabled: document.getElementById('check-mod-enabled'),
-    moderatorSubsettings: document.getElementById('moderator-subsettings'),
-    selectModStyle: document.getElementById('select-mod-style'),
     checkDiscussionEnabled: document.getElementById('check-discussion-enabled'),
     grpTeamDiscussion: document.getElementById('grp-team-discussion'),
     
@@ -134,7 +130,6 @@ function initApp() {
   initializePresets();
   loadModeratorFromStorage();
   loadDebateModeFromStorage();
-  loadRulePresetFromStorage();
   loadTeamDiscussionFromStorage();
   setupEventListeners();
   updateUIForState();
@@ -189,98 +184,42 @@ function saveDebateModeToStorage() {
 
 function loadDebateModeFromStorage() {
   try {
-    const savedMode = localStorage.getItem('ai_debate_mode_v2');
+    let savedMode = localStorage.getItem('ai_debate_mode_v2');
+    
+    // Map legacy modes to new modes if they exist
+    if (savedMode === "formal") savedMode = "medium";
+    else if (savedMode === "creative") savedMode = "advanced";
+
     if (savedMode) {
       debateState.debateMode = savedMode;
       if (elements.selectDebateMode) {
         elements.selectDebateMode.value = savedMode;
       }
-    }
-  } catch (e) {
-    console.warn("Storage access restricted:", e);
-  }
-}
-
-function saveRulePresetToStorage() {
-  try {
-    localStorage.setItem('ai_debate_rule_preset_v2', debateState.rulePreset);
-  } catch (e) {
-    console.warn("Storage writing restricted:", e);
-  }
-}
-
-function loadRulePresetFromStorage() {
-  try {
-    const savedPreset = localStorage.getItem('ai_debate_rule_preset_v2');
-    if (savedPreset) {
-      debateState.rulePreset = savedPreset;
-      if (elements.selectRulePreset) {
-        elements.selectRulePreset.value = savedPreset;
-      }
-      applyRulePreset(savedPreset);
     } else {
-      setRulePreset("classic-arena", false);
-      applyRulePreset("classic-arena");
+      debateState.debateMode = "medium";
+      if (elements.selectDebateMode) {
+        elements.selectDebateMode.value = "medium";
+      }
+    }
+    
+    // Auto-adjust rounds count slider based on loaded mode
+    let autoRounds = 2;
+    const mode = debateState.debateMode;
+    if (mode === "short" || mode === "twitter") autoRounds = 1;
+    else if (mode === "medium" || mode === "humorous") autoRounds = 2;
+    else if (mode === "long" || mode === "podcast") autoRounds = 3;
+    else if (mode === "advanced") autoRounds = 4;
+    else if (mode === "socratic") autoRounds = 5;
+    
+    if (elements.inputRounds) {
+      elements.inputRounds.value = autoRounds;
+      if (elements.valRounds) {
+        elements.valRounds.textContent = autoRounds;
+      }
     }
   } catch (e) {
     console.warn("Storage access restricted:", e);
-  }
-}
-
-function applyRulePreset(presetId) {
-  if (presetId === "custom") return;
-  
-  let rounds = 2;
-  let mode = "formal";
-  let modEnabled = true;
-
-  if (presetId === "quick-clash") {
-    rounds = 1;
-    mode = "twitter";
-    modEnabled = true;
-  } else if (presetId === "classic-arena") {
-    rounds = 2;
-    mode = "formal";
-    modEnabled = true;
-  } else if (presetId === "deep-podcast") {
-    rounds = 3;
-    mode = "podcast";
-    modEnabled = true;
-  } else if (presetId === "direct-faceoff") {
-    rounds = 2;
-    mode = "formal";
-    modEnabled = false;
-  }
-
-  // Update State
-  debateState.debateMode = mode;
-  debateState.moderator.enabled = modEnabled;
-  
-  // Update UI Elements
-  if (elements.inputRounds) {
-    elements.inputRounds.value = rounds;
-    elements.valRounds.textContent = rounds;
-  }
-  if (elements.selectDebateMode) {
-    elements.selectDebateMode.value = mode;
-  }
-  if (elements.checkModEnabled) {
-    elements.checkModEnabled.checked = modEnabled;
-    elements.moderatorSubsettings.style.display = modEnabled ? 'block' : 'none';
-  }
-  
-  // Save all to storage
-  saveDebateModeToStorage();
-  saveModeratorToStorage();
-}
-
-function setRulePreset(presetId, save = true) {
-  debateState.rulePreset = presetId;
-  if (elements.selectRulePreset) {
-    elements.selectRulePreset.value = presetId;
-  }
-  if (save) {
-    saveRulePresetToStorage();
+    debateState.debateMode = "medium";
   }
 }
 
@@ -310,34 +249,22 @@ function loadModeratorFromStorage() {
   // Sync state to elements if they exist
   if (elements.checkModEnabled) {
     elements.checkModEnabled.checked = debateState.moderator.enabled;
-    elements.moderatorSubsettings.style.display = debateState.moderator.enabled ? 'block' : 'none';
-  }
-  if (elements.selectModStyle) {
-    elements.selectModStyle.value = debateState.moderator.style;
   }
 }
 
 // Populate preset dropdowns
 function initializePresets() {
   // Topics select
-  DEBATE_PRESETS.topics.forEach(topic => {
-    const opt = document.createElement('option');
-    opt.value = topic.id;
-    opt.textContent = topic.title;
-    elements.selectPreset.appendChild(opt);
-  });
-  
-  // Moderator styles select
-  DEBATE_PRESETS.moderators.forEach(mod => {
-    const opt = document.createElement('option');
-    opt.value = mod.id;
-    opt.textContent = mod.name;
-    elements.selectModStyle.appendChild(opt);
-  });
-
-  // Set default values
-  elements.selectPreset.value = "custom";
-  elements.selectModStyle.value = "strict-judge";
+  if (elements.selectPreset) {
+    DEBATE_PRESETS.topics.forEach(topic => {
+      const opt = document.createElement('option');
+      opt.value = topic.id;
+      opt.textContent = topic.title;
+      elements.selectPreset.appendChild(opt);
+    });
+    // Set default values
+    elements.selectPreset.value = "custom";
+  }
 }
 
 // Populate models select based on chosen provider
@@ -841,22 +768,40 @@ function setupEventListeners() {
     elements.btnModalAddDebater.addEventListener('click', addDebater);
   }
   
-  // Style for Moderator (Sidebar control, saves instantly)
-  elements.selectModStyle.addEventListener('change', () => {
-    debateState.moderator.style = elements.selectModStyle.value;
-    saveModeratorToStorage();
-  });
+  // Debate Mode listener
+  if (elements.selectDebateMode) {
+    elements.selectDebateMode.addEventListener('change', () => {
+      const mode = elements.selectDebateMode.value;
+      debateState.debateMode = mode;
+      saveDebateModeToStorage();
+      
+      // Auto-adjust rounds slider
+      let autoRounds = 2;
+      if (mode === "short" || mode === "twitter") autoRounds = 1;
+      else if (mode === "medium" || mode === "humorous") autoRounds = 2;
+      else if (mode === "long" || mode === "podcast") autoRounds = 3;
+      else if (mode === "advanced") autoRounds = 4;
+      else if (mode === "socratic") autoRounds = 5;
+      
+      if (elements.inputRounds) {
+        elements.inputRounds.value = autoRounds;
+        elements.valRounds.textContent = autoRounds;
+      }
+      updateUIForState();
+    });
+  }
 
   // Rounds slider
   elements.inputRounds.addEventListener('input', (e) => {
     elements.valRounds.textContent = e.target.value;
+    updateUIForState();
   });
   
   // Moderator toggle
   elements.checkModEnabled.addEventListener('change', (e) => {
-    elements.moderatorSubsettings.style.display = e.target.checked ? 'block' : 'none';
     debateState.moderator.enabled = e.target.checked;
     saveModeratorToStorage();
+    updateUIForState();
   });
 
   // Team discussion toggle
@@ -1196,8 +1141,7 @@ async function stepTurn() {
     debateState.currentRound = step.round;
   } else if (step.type.startsWith('mod')) {
     role = 'mod';
-    const modStyle = DEBATE_PRESETS.moderators.find(m => m.id === elements.selectModStyle.value);
-    speakerName = modStyle ? modStyle.name : "Moderator";
+    speakerName = "Moderator";
     avatar = '⚖️';
   } else if (step.type === 'judge-verdict') {
     role = 'judge';
@@ -1641,16 +1585,26 @@ async function callSpeakerAPI(debater, step) {
       ].join('\n');
     }
     
-    // 3. Debate Mode rules
+    // 3. Debate Mode rules & constraints
     let modeDirectives = "";
-    if (debateState.debateMode === "twitter") {
-      modeDirectives = `Debate Mode: Punchy / Social Media. Keep your responses short, sharp, punchy, and aggressive. Speak like you are debating in a fast-paced social media feed.`;
+    if (debateState.debateMode === "short") {
+      modeDirectives = `Debate Mode: Short Face-off. Deliver a punchy, concise, and direct statement. You are limited to a maximum of 100 words. Focus only on your strongest point and attack the opponent's core claim immediately.`;
+    } else if (debateState.debateMode === "medium") {
+      modeDirectives = `Debate Mode: Standard Debate. Deliver a well-structured, persuasive statement. You are limited to a maximum of 200 words. Balance your time between supporting your stance and addressing key counterclaims.`;
+    } else if (debateState.debateMode === "long") {
+      modeDirectives = `Debate Mode: Deep Analysis. Deliver a thorough, evidence-based, and analytical statement. You are limited to a maximum of 400 words. Elaborate on structural points, cite logical frameworks, and dissect the opponent's arguments in detail.`;
+    } else if (debateState.debateMode === "advanced") {
+      modeDirectives = `Debate Mode: Advanced Academic. Deliver a highly rigorous, sophisticated, and comprehensive argument. You are limited to a maximum of 600 words. Use formal logic, analyze systemic implications, and provide a deep, philosophical or empirical defense.`;
+    } else if (debateState.debateMode === "twitter") {
+      modeDirectives = `Debate Mode: Twitter / X Fight. Keep your response extremely short, sharp, punchy, and aggressive. You are limited to a maximum of 50 words. Speak like you are debating in a fast-paced, hype-filled social media feed using tech buzzwords and sharp sarcasm.`;
     } else if (debateState.debateMode === "podcast") {
-      modeDirectives = `Debate Mode: Casual / Podcast. Keep your responses conversational, natural, and verbose. Reference other debaters by name. Use a conversational but argumentative tone.`;
-    } else if (debateState.debateMode === "creative") {
-      modeDirectives = `Debate Mode: Creative & Expressive. Deliver your argument in an expressive, highly theatrical, or stylistic manner. You are encouraged to use vivid metaphors, storytelling, rhyming hip-hop bars, or distinct roleplay (such as space-delegate, socratic inquiry, or passive-aggressive corporate speak) to make your points entertaining, clever, and persuasive.`;
+      modeDirectives = `Debate Mode: Podcast Talkshow. Keep your response conversational, natural, and verbose. You are limited to a maximum of 300 words. Reference other debaters by name. Use a conversational, engaging, but argumentative podcast tone.`;
+    } else if (debateState.debateMode === "socratic") {
+      modeDirectives = `Debate Mode: Socratic Dialogue. Deliver a probing statement that questions your opponent's core assumptions and premises. You are limited to a maximum of 150 words. Use Socratic irony, ask challenging questions, and guide the debate through logical inquiry.`;
+    } else if (debateState.debateMode === "humorous") {
+      modeDirectives = `Debate Mode: Humorous / Satirical. Deliver a witty, sarcastic, and highly entertaining statement. You are limited to a maximum of 200 words. Use clever analogies, lighthearted humor, and ironical framing to dismantle the opposition's points.`;
     } else {
-      modeDirectives = `Debate Mode: Standard / Formal. Deliver a structured, formal statement refuting the opposition.`;
+      modeDirectives = `Debate Mode: Standard Debate. Deliver a well-structured statement. You are limited to a maximum of 200 words.`;
     }
     
     // 4. Strategic Reasoning Stream Formatting
@@ -2113,9 +2067,7 @@ function compileTranscript(activeDebater = null, isExport = false) {
 }
 
 function getModeratorInstructions() {
-  const modStyleId = elements.selectModStyle.value;
-  const style = DEBATE_PRESETS.moderators.find(m => m.id === modStyleId);
-  return style ? style.systemInstructions : "You are the debate moderator.";
+  return DEBATE_PRESETS.defaultModerator.systemInstructions;
 }
 
 function finalizeDebateState() {
@@ -2490,7 +2442,9 @@ function updateUIForState() {
   document.querySelectorAll('.btn-remove-debater').forEach(el => el.disabled = disableForm);
   
   elements.checkModEnabled.disabled = disableForm;
-  elements.selectModStyle.disabled = disableForm;
+  if (elements.selectDebateMode) {
+    elements.selectDebateMode.disabled = disableForm;
+  }
   elements.inputRounds.disabled = disableForm;
   elements.btnSettingsToggle.disabled = disableForm;
   
@@ -2561,12 +2515,13 @@ function updateUIForState() {
   if (displayRulesSummary) {
     const rounds = elements.inputRounds.value;
     const modEnabled = elements.checkModEnabled.checked;
-    const modStyle = elements.selectModStyle.options[elements.selectModStyle.selectedIndex]?.text || "Standard";
+    const debateModeText = elements.selectDebateMode ? elements.selectDebateMode.options[elements.selectDebateMode.selectedIndex]?.text : "Standard";
     const discEnabled = elements.checkDiscussionEnabled && elements.checkDiscussionEnabled.checked;
     
     let summaryHtml = `<div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; color: var(--text-muted);">`;
+    summaryHtml += `<div>Debate Mode: <strong style="color: var(--text-main);">${debateModeText}</strong></div>`;
     summaryHtml += `<div>Rounds Per Debater: <strong style="color: var(--text-main); font-family: var(--font-mono);">${rounds}</strong></div>`;
-    summaryHtml += `<div>AI Moderator / Judge: <strong style="color: var(--text-main);">${modEnabled ? `Enabled (${modStyle})` : 'Disabled'}</strong></div>`;
+    summaryHtml += `<div>AI Moderator & Judge: <strong style="color: var(--text-main);">${modEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Team Discussion: <strong style="color: var(--text-main);">${discEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `</div>`;
     displayRulesSummary.innerHTML = summaryHtml;

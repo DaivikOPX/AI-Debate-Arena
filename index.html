@@ -66,18 +66,23 @@
         <h2 class="section-title">Rules & Format</h2>
         <div class="rules-form-content">
           <div class="form-group">
+            <label for="select-debate-mode">Debate Mode</label>
+            <select id="select-debate-mode">
+              <option value="short">Short Face-off (1 Round, Max 100 words)</option>
+              <option value="medium" selected>Standard Debate (2 Rounds, Max 200 words)</option>
+              <option value="long">Deep Analysis (3 Rounds, Max 400 words)</option>
+              <option value="advanced">Advanced Academic (4 Rounds, Max 600 words)</option>
+              <option value="twitter">Twitter / X Fight (1 Round, Max 50 words, Aggressive)</option>
+              <option value="podcast">Podcast Talkshow (3 Rounds, Max 300 words, Conversational)</option>
+              <option value="socratic">Socratic Dialogue (5 Rounds, Max 150 words, Probing)</option>
+              <option value="humorous">Humorous / Satirical (2 Rounds, Max 200 words, Witty)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-top: 0.85rem;">
             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
               <input type="checkbox" id="check-mod-enabled" checked style="width: auto;">
-              Enable AI Moderator / Judge
+              Enable AI Moderator & Judge
             </label>
-          </div>
-          <div id="moderator-subsettings">
-            <div class="form-group">
-              <label for="select-mod-style">Moderation Style</label>
-              <select id="select-mod-style">
-                <!-- Dynamically populated -->
-              </select>
-            </div>
           </div>
           <div class="form-group" id="grp-team-discussion" style="display: none;">
             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
