@@ -865,6 +865,20 @@ export function removeDebater(id) {
   renderSettingsModal();
 }
 
+export function initializePresets() {
+  if (!elements.selectPreset) return;
+  elements.selectPreset.innerHTML = '<option value="custom">-- Custom Topic --</option>';
+  if (typeof DEBATE_PRESETS !== 'undefined' && DEBATE_PRESETS.topics) {
+    DEBATE_PRESETS.topics.forEach(topic => {
+      const opt = document.createElement('option');
+      opt.value = topic.id;
+      opt.textContent = topic.title;
+      elements.selectPreset.appendChild(opt);
+    });
+  }
+  elements.selectPreset.value = "custom";
+}
+
 export function loadTopicPreset(topicId) {
   if (topicId === "custom") return;
   const topic = DEBATE_PRESETS.topics.find(t => t.id === topicId);
