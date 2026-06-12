@@ -412,9 +412,9 @@ function renderSettingsModal() {
   // Build providers options
   const providers = [
     { id: 'gemini', name: 'Google Gemini' },
-    { id: 'openrouter', name: 'OpenRouter' },
-    { id: 'openai', name: 'OpenAI' },
-    { id: 'anthropic', name: 'Anthropic' },
+    { id: 'openrouter', name: 'OpenRouter (Recommended - CORS Friendly)' },
+    { id: 'openai', name: 'OpenAI (Direct - May block CORS)' },
+    { id: 'anthropic', name: 'Anthropic (Direct - May block CORS)' },
     { id: 'huggingface', name: 'Hugging Face' },
     { id: 'grok', name: 'Grok (xAI)' },
     { id: 'groq', name: 'Groq' },
@@ -2152,7 +2152,7 @@ function parseMarkdown(text) {
   html = html.replace(/`(.*?)`/g, '<code>$1</code>');
   
   const paragraphs = html.split(/\n\n+/);
-  return paragraphs.map(p => {
+  const rawHtml = paragraphs.map(p => {
     const trimmed = p.trim();
     if (!trimmed) return "";
     
@@ -2172,6 +2172,11 @@ function parseMarkdown(text) {
     
     return `<p>${trimmed.replace(/\n/g, '<br>')}</p>`;
   }).join('');
+
+  if (typeof DOMPurify !== 'undefined') {
+    return DOMPurify.sanitize(rawHtml);
+  }
+  return rawHtml;
 }
 
 // ----------------------------------------------------
@@ -2210,12 +2215,12 @@ function appendTypingIndicator(role, name, avatar, step) {
     }
   }
   typeDiv.innerHTML = `
-    <div class="message-avatar">${avatar}</div>
+    <div class="message-avatar">${escapeHtml(avatar)}</div>
     <div class="message-bubble-wrapper">
       <div class="message-meta">
-        <span class="message-speaker">${name}</span>
+        <span class="message-speaker">${escapeHtml(name)}</span>
         ${metaBadge}
-        <span class="message-time">${phaseLabel}</span>
+        <span class="message-time">${escapeHtml(phaseLabel)}</span>
       </div>
       <div class="message-bubble">
         <div class="typing-dots">
@@ -2277,12 +2282,12 @@ function appendMessageWithAnimation(role, name, text, avatar, step) {
     }
 
     msgDiv.innerHTML = `
-      ${!isMod ? `<div class="message-avatar">${avatar}</div>` : ''}
+      ${!isMod ? `<div class="message-avatar">${escapeHtml(avatar)}</div>` : ''}
       <div class="message-bubble-wrapper" style="${isMod ? 'width: 100%;' : ''}">
         <div class="message-meta">
-          <span class="message-speaker">${name}</span>
+          <span class="message-speaker">${escapeHtml(name)}</span>
           ${metaBadge}
-          <span class="message-time">${phaseLabel}</span>
+          <span class="message-time">${escapeHtml(phaseLabel)}</span>
         </div>
         <div class="message-bubble">
           ${thoughtHtml}
@@ -2324,10 +2329,10 @@ function appendErrorCard(role, name, error) {
   errDiv.innerHTML = `
     <div class="message-bubble" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.05);">
       <div class="message-meta" style="color: #ef4444; justify-content: center;">
-        <strong>⚠️ ERROR IN TRANSMISSION (${name})</strong>
+        <strong>⚠️ ERROR IN TRANSMISSION (${escapeHtml(name)})</strong>
       </div>
       <div class="message-content" style="text-align: left; font-size: 0.85rem;">
-        <p><strong>Details:</strong> ${error.message || error || "Unknown Connection Failure"}</p>
+        <p><strong>Details:</strong> ${escapeHtml(error.message || error || "Unknown Connection Failure")}</p>
         <p style="margin-top: 0.5rem; border-top: 1px solid rgba(239, 68, 68, 0.2); padding-top: 0.5rem; color: var(--text-muted);">
           ${instructions}
         </p>
@@ -2355,6 +2360,16 @@ function renderScorecard(data) {
     winnerClass = 'winner-con';
     winnerText = conName;
   }
+
+  // Cast scores to safe integers to completely eliminate XSS vectors
+  const pL = parseInt(data.scores?.pro?.logical) || 0;
+  const cL = parseInt(data.scores?.con?.logical) || 0;
+  const pR = parseInt(data.scores?.pro?.rhetorical) || 0;
+  const cR = parseInt(data.scores?.con?.rhetorical) || 0;
+  const pRb = parseInt(data.scores?.pro?.rebuttal) || 0;
+  const cRb = parseInt(data.scores?.con?.rebuttal) || 0;
+  const pRs = parseInt(data.scores?.pro?.reasoning) || 0;
+  const cRs = parseInt(data.scores?.con?.reasoning) || 0;
   
   scoreCardDiv.innerHTML = `
     <div class="verdict-title">
@@ -2362,57 +2377,59 @@ function renderScorecard(data) {
     </div>
     <div class="verdict-winner">
       <div class="verdict-winner-label">Debate Winner</div>
-      <div class="verdict-winner-name ${winnerClass}">${winnerText}</div>
+      <div class="verdict-winner-name ${escapeHtml(winnerClass)}">${escapeHtml(winnerText)}</div>
     </div>
     <div class="scorecard-metrics">
       <div class="metric-row">
         <div class="metric-label">
-          <span style="color: var(--color-pro);">${data.scores.pro.logical}</span>
+          <span style="color: var(--color-pro);">${pL}</span>
           <span>Logical Consistency</span>
-          <span style="color: var(--color-con);">${data.scores.con.logical}</span>
+          <span style="color: var(--color-con);">${cL}</span>
         </div>
         <div class="metric-bar-container">
-          <div class="metric-bar-pro" style="width: ${data.scores.pro.logical}%"></div>
-          <div class="metric-bar-con" style="width: ${data.scores.con.logical}%"></div>
+          <div class="metric-bar-pro" style="width: ${pL}%"></div>
+          <div class="metric-bar-con" style="width: ${cL}%"></div>
         </div>
       </div>
       <div class="metric-row">
         <div class="metric-label">
-          <span style="color: var(--color-pro);">${data.scores.pro.rhetorical}</span>
+          <span style="color: var(--color-pro);">${pR}</span>
           <span>Rhetorical Strength</span>
-          <span style="color: var(--color-con);">${data.scores.con.rhetorical}</span>
+          <span style="color: var(--color-con);">${cR}</span>
         </div>
         <div class="metric-bar-container">
-          <div class="metric-bar-pro" style="width: ${data.scores.pro.rhetorical}%"></div>
-          <div class="metric-bar-con" style="width: ${data.scores.con.rhetorical}%"></div>
+          <div class="metric-bar-pro" style="width: ${pR}%"></div>
+          <div class="metric-bar-con" style="width: ${cR}%"></div>
         </div>
       </div>
       <div class="metric-row">
         <div class="metric-label">
-          <span style="color: var(--color-pro);">${data.scores.pro.rebuttal}</span>
+          <span style="color: var(--color-pro);">${pRb}</span>
           <span>Rebuttal Effectiveness</span>
-          <span style="color: var(--color-con);">${data.scores.con.rebuttal}</span>
+          <span style="color: var(--color-con);">${cRb}</span>
         </div>
         <div class="metric-bar-container">
-          <div class="metric-bar-pro" style="width: ${data.scores.pro.rebuttal}%"></div>
-          <div class="metric-bar-con" style="width: ${data.scores.con.rebuttal}%"></div>
+          <div class="metric-bar-pro" style="width: ${pRb}%"></div>
+          <div class="metric-bar-con" style="width: ${cRb}%"></div>
         </div>
       </div>
       <div class="metric-row">
         <div class="metric-label">
-          <span style="color: var(--color-pro);">${data.scores.pro.reasoning}</span>
+          <span style="color: var(--color-pro);">${pRs}</span>
           <span>Fact-Based Reasoning</span>
-          <span style="color: var(--color-con);">${data.scores.con.reasoning}</span>
+          <span style="color: var(--color-con);">${cRs}</span>
         </div>
         <div class="metric-bar-container">
-          <div class="metric-bar-pro" style="width: ${data.scores.pro.reasoning}%"></div>
-          <div class="metric-bar-con" style="width: ${data.scores.con.reasoning}%"></div>
+          <div class="metric-bar-pro" style="width: ${pRs}%"></div>
+          <div class="metric-bar-con" style="width: ${cRs}%"></div>
         </div>
       </div>
     </div>
     <div class="verdict-summary">
       <h4>Judge's Decision Rationale</h4>
-      <p>${parseMarkdown(data.summary)}</p>
+      <div class="verdict-summary-content">
+        ${parseMarkdown(data.summary)}
+      </div>
     </div>
   `;
   
