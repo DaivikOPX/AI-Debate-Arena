@@ -467,6 +467,8 @@ header {
 
 /* ─── Section 7: Sidebar — Settings Dashboard ─────────────────── */
 .sidebar {
+  grid-column: 1;
+  grid-row: 1;
   background: rgba(8, 12, 24, 0.5);
   border-right: 1px solid var(--border-color);
   padding: 1.5rem;
@@ -933,6 +935,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* ─── Section 14: Arena View (Right Panel) ─────────────────────── */
 .arena-view {
+  grid-column: 2;
+  grid-row: 1;
   display: grid;
   grid-template-rows: auto 1fr auto;
   height: 100%;
@@ -2633,8 +2637,8 @@ body.debate-active .sidebar {
 /* Custom Floating Sidebar Collapse Button */
 .sidebar-collapse-btn {
   position: absolute;
-  top: 1.5rem;
-  left: 366px; /* Centered on the 380px sidebar right border: 380px - (28px width / 2) */
+  top: 2.25rem;
+  left: 335px; /* Placed inside the top-right of the 380px wide sidebar */
   z-index: 99;
   width: 28px;
   height: 28px;
