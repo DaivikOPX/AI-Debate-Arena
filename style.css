@@ -1,0 +1,2541 @@
+/* ═══════════════════════════════════════════════════════════════════
+   AI Debate Arena V2 — Premium Cinematic Dark-Mode UI
+   Complete Visual Overhaul
+   ═══════════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* ─── Section 1: CSS Custom Properties ─────────────────────────── */
+:root {
+  --bg-primary: #000000;
+  --bg-secondary: #0b0f19;
+  --bg-glass: rgba(15, 23, 42, 0.55);
+  --bg-glass-hover: rgba(30, 41, 59, 0.65);
+  --border-color: rgba(255, 255, 255, 0.06);
+  --border-glow: rgba(0, 242, 254, 0.2);
+
+  /* HSL Colors for neon elements */
+  --color-pro: hsl(180, 100%, 50%);      /* Cyber Cyan */
+  --color-pro-glow: hsla(180, 100%, 50%, 0.3);
+  --color-con: hsl(325, 100%, 55%);      /* Cyber Pink */
+  --color-con-glow: hsla(325, 100%, 55%, 0.3);
+  --color-mod: hsl(45, 100%, 55%);       /* Cyber Gold */
+  --color-mod-glow: hsla(45, 100%, 55%, 0.3);
+
+  --text-main: #f8fafc;
+  --text-muted: #64748b;
+  --text-dark: #0f172a;
+
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --shadow-main: 0 10px 40px rgba(0, 0, 0, 0.45);
+  --shadow-glow-pro: 0 0 20px rgba(0, 242, 254, 0.25), 0 0 60px rgba(0, 242, 254, 0.08);
+  --shadow-glow-con: 0 0 20px rgba(255, 0, 127, 0.25), 0 0 60px rgba(255, 0, 127, 0.08);
+  --shadow-glow-mod: 0 0 20px rgba(255, 183, 3, 0.25), 0 0 60px rgba(255, 183, 3, 0.08);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 24px;
+
+  --orb-speed: 25s;
+  --holo-speed: 4s;
+}
+
+/* ─── Section 2: Keyframe Animations ───────────────────────────── */
+
+/* Floating orb drift animations */
+@keyframes orbDrift1 {
+  0%   { transform: translate(0, 0) scale(1); }
+  25%  { transform: translate(15vw, -10vh) scale(1.1); }
+  50%  { transform: translate(-5vw, 15vh) scale(0.95); }
+  75%  { transform: translate(-15vw, -5vh) scale(1.05); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes orbDrift2 {
+  0%   { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(-20vw, 12vh) scale(1.15); }
+  66%  { transform: translate(10vw, -8vh) scale(0.9); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes orbDrift3 {
+  0%   { transform: translate(0, 0) scale(1); }
+  20%  { transform: translate(12vw, 18vh) scale(1.08); }
+  40%  { transform: translate(-18vw, -6vh) scale(0.92); }
+  60%  { transform: translate(8vw, -15vh) scale(1.12); }
+  80%  { transform: translate(-8vw, 10vh) scale(0.96); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* Animated top gradient bar */
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Header bottom rainbow border */
+@keyframes headerBorderShift {
+  0%   { background-position: 0% 50%; }
+  25%  { background-position: 50% 50%; }
+  50%  { background-position: 100% 50%; }
+  75%  { background-position: 50% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Logo breathing glow */
+@keyframes breathingGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.3), 0 0 30px rgba(0, 242, 254, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.5), 0 0 50px rgba(0, 242, 254, 0.2), 0 0 80px rgba(0, 242, 254, 0.08);
+  }
+}
+
+/* Status running ring pulse */
+@keyframes statusRingPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Button primary pulsing glow */
+@keyframes pulseAttention {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.25), 0 0 30px rgba(0, 242, 254, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.45), 0 0 50px rgba(0, 242, 254, 0.15), 0 0 80px rgba(0, 242, 254, 0.05);
+  }
+}
+
+/* Card staggered fade-in */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Pod active pulse — Pro */
+@keyframes pulse-pro {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.2), inset 0 0 8px rgba(0, 242, 254, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 242, 254, 0.5), 0 0 80px rgba(0, 242, 254, 0.15), inset 0 0 20px rgba(0, 242, 254, 0.15);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.2), inset 0 0 8px rgba(0, 242, 254, 0.08);
+  }
+}
+
+/* Pod active pulse — Con */
+@keyframes pulse-con {
+  0% {
+    box-shadow: 0 0 20px rgba(255, 0, 127, 0.2), inset 0 0 8px rgba(255, 0, 127, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 0, 127, 0.5), 0 0 80px rgba(255, 0, 127, 0.15), inset 0 0 20px rgba(255, 0, 127, 0.15);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(255, 0, 127, 0.2), inset 0 0 8px rgba(255, 0, 127, 0.08);
+  }
+}
+
+/* Holographic ring rotation for pod avatars */
+@keyframes holoSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Thinking wave bounce */
+@keyframes waveBounce {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(2.5); }
+}
+
+/* Message slide in */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Feed empty float */
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25%  { transform: translateY(-6px) rotate(-1deg); }
+  50%  { transform: translateY(-12px) rotate(0deg); }
+  75%  { transform: translateY(-6px) rotate(1deg); }
+}
+
+@keyframes floatText {
+  0%, 100% { transform: translateY(0); }
+  50%  { transform: translateY(-5px); }
+}
+
+/* Typing bounce */
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
+
+/* Modal slide in */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Verdict shimmer sweep */
+@keyframes shimmerSweep {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Modal holographic border rotation */
+@keyframes holoRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Pulse glow for status-running */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+/* Terminal cursor blink */
+@keyframes terminalCursor {
+  to { visibility: hidden; }
+}
+
+/* Focus ring expand */
+@keyframes focusRingExpand {
+  from {
+    box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.4);
+  }
+  to {
+    box-shadow: 0 0 0 4px rgba(0, 242, 254, 0.1), 0 0 15px rgba(0, 242, 254, 0.2);
+  }
+}
+
+/* Noise flicker (subtle) */
+@keyframes noiseShift {
+  0%   { transform: translate(0, 0); }
+  10%  { transform: translate(-1%, -1%); }
+  20%  { transform: translate(1%, 0%); }
+  30%  { transform: translate(0%, 1%); }
+  40%  { transform: translate(-1%, 1%); }
+  50%  { transform: translate(1%, -1%); }
+  60%  { transform: translate(0%, 0%); }
+  70%  { transform: translate(-1%, 0%); }
+  80%  { transform: translate(1%, 1%); }
+  90%  { transform: translate(0%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Mobile modal slide up */
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0.5;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+/* ─── Section 3: Base Resets & Body ────────────────────────────── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #000000;
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+
+/* ─── Section 4: Header & Navbar ───────────────────────────────── */
+header {
+  backdrop-filter: blur(24px) saturate(1.4);
+  background: rgba(3, 7, 18, 0.8);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 2.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0; /* Sticky to top */
+  z-index: 50;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  isolation: isolate;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.logo-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, var(--color-pro), var(--color-con));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.35rem;
+  color: var(--bg-primary);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+  transition: transform var(--transition-smooth);
+}
+
+.logo-container:hover .logo-icon {
+  transform: rotate(10deg) scale(1.08);
+}
+
+.logo-title h1 {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(to right, #ffffff, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-title span {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--color-mod);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: block;
+  margin-top: -2px;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+
+/* ─── Section 5: Buttons ───────────────────────────────────────── */
+.btn {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-fast);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+  font-size: 0.88rem;
+  backdrop-filter: blur(6px);
+  position: relative;
+}
+
+.btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.btn:active {
+  transform: scale(0.97);
+  transition-duration: 0.08s;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-pro), #0052d4);
+  color: #020617;
+  border: none;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #00f2fe, #4364f7);
+  box-shadow: 0 0 30px rgba(0, 242, 254, 0.55), 0 0 60px rgba(0, 242, 254, 0.15);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-primary:disabled {
+  background: #1e293b;
+  color: var(--text-muted);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+  animation: none;
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #f87171;
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.22);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+.btn-sm {
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+}
+
+
+/* ─── Section 6: App Main Grid Layout ─────────────────────────── */
+.app-container {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  flex: 1;
+  height: calc(100vh - 76px); /* adjusted for top bar + header */
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ─── Section 7: Sidebar — Settings Dashboard ─────────────────── */
+.sidebar {
+  background: rgba(8, 12, 24, 0.5);
+  border-right: 1px solid var(--border-color);
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 2;
+}
+
+.section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding-bottom: 0.55rem;
+}
+
+/* Subtle underline glow on section titles */
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(0, 242, 254, 0.5), transparent);
+  border-radius: 1px;
+}
+
+/* Card — Sidebar Cards with accent bar and staggered animation */
+.card {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid rgba(0, 242, 254, 0.2);
+  backdrop-filter: blur(18px);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  transition: all var(--transition-smooth);
+  animation: fadeSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+.card:nth-child(6) { animation-delay: 0.3s; }
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 20px rgba(0, 242, 254, 0.04);
+  transform: translateY(-2px);
+}
+
+
+/* ─── Section 8: Setup Form Styles ─────────────────────────────── */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #94a3b8;
+  margin-bottom: 0.45rem;
+  transition: color var(--transition-fast);
+}
+
+/* Glassmorphic frosted form inputs */
+select, input, textarea {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem;
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(12px);
+}
+
+select:focus, input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-pro);
+  background: rgba(0, 0, 0, 0.55);
+  box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.12), 0 0 20px rgba(0, 242, 254, 0.15);
+  animation: focusRingExpand 0.3s ease forwards;
+}
+
+select:hover, input:hover, textarea:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+
+/* ─── Section 9: Dynamic Debater Config Cards (Sidebar) ────────── */
+.debater-config-card {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem;
+  position: relative;
+  transition: all var(--transition-fast);
+  overflow: hidden;
+}
+
+.debater-config-card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.debater-config-card.team-pro {
+  border-left: 3px solid var(--color-pro);
+}
+
+.debater-config-card.team-con {
+  border-left: 3px solid var(--color-con);
+}
+
+.debater-config-body {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  padding-top: 0;
+  margin-top: 0;
+  border-top: 1px solid transparent;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.25s ease,
+              padding 0.3s ease,
+              margin 0.3s ease;
+}
+
+.debater-config-card.expanded .debater-config-body {
+  max-height: 1200px;
+  opacity: 1;
+  padding-top: 0.85rem;
+  margin-top: 0.85rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.accordion-arrow {
+  display: inline-block;
+  transition: transform var(--transition-fast);
+}
+
+.debater-config-card.expanded .accordion-arrow {
+  transform: rotate(180deg);
+}
+
+.debater-config-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.4rem;
+}
+
+.debater-config-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-remove-debater {
+  background: none;
+  border: none;
+  color: rgba(239, 68, 68, 0.7);
+  cursor: pointer;
+  padding: 0.15rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  transition: all var(--transition-fast);
+}
+
+.btn-remove-debater:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  transform: scale(1.1);
+}
+
+
+/* ─── Section 10: Control Panel (Sticky Bottom) ───────────────── */
+.control-panel {
+  position: sticky;
+  bottom: -1.5rem;
+  margin-top: auto;
+  background: rgba(6, 10, 20, 0.92);
+  backdrop-filter: blur(24px) saturate(1.3);
+  padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+  margin-left: -1.5rem;
+  margin-right: -1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  z-index: 10;
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+
+/* ─── Section 11: Header Settings Buttons ──────────────────────── */
+.header-settings-btn {
+  background: rgba(0, 242, 254, 0.05);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: 9999px;
+  padding: 0.5rem 1.15rem !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--color-pro);
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.05);
+  width: auto !important;
+  height: auto !important;
+  backdrop-filter: blur(12px);
+  font-size: 0.88rem;
+}
+
+.header-settings-btn:hover {
+  background: rgba(0, 242, 254, 0.12) !important;
+  border-color: rgba(0, 242, 254, 0.5) !important;
+  color: #fff !important;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.25), 0 0 40px rgba(0, 242, 254, 0.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+.header-settings-btn:active {
+  transform: scale(0.97) !important;
+}
+
+.header-settings-btn svg {
+  transition: transform 0.5s ease;
+}
+
+.header-settings-btn:hover svg {
+  transform: rotate(90deg);
+}
+
+/* Second settings button (Moderator) — gold tones */
+.header-settings-btn:nth-of-type(2),
+.header-settings-btn + .header-settings-btn {
+  color: var(--color-mod);
+  border-color: rgba(255, 183, 3, 0.2);
+  background: rgba(255, 183, 3, 0.05);
+}
+
+.header-settings-btn:nth-of-type(2):hover,
+.header-settings-btn + .header-settings-btn:hover {
+  background: rgba(255, 183, 3, 0.12) !important;
+  border-color: rgba(255, 183, 3, 0.5) !important;
+  box-shadow: 0 0 20px rgba(255, 183, 3, 0.25), 0 0 40px rgba(255, 183, 3, 0.08) !important;
+}
+
+
+/* ─── Section 12: Nested API Toggle Design ─────────────────────── */
+.debater-card-api-toggle, .moderator-api-toggle {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  transition: all 0.25s ease !important;
+  border-radius: var(--radius-sm);
+}
+
+.debater-card-api-toggle:hover, .moderator-api-toggle:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.04);
+}
+
+
+/* ─── Section 13: Sliders ──────────────────────────────────────── */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  outline: none;
+  border: none;
+  padding: 0;
+  margin: 0.6rem 0;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--color-pro);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -6px;
+  box-shadow: 0 0 10px var(--color-pro), 0 0 20px rgba(0, 242, 254, 0.15);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.35);
+  background: #00f2fe;
+  box-shadow: 0 0 18px #00f2fe, 0 0 35px rgba(0, 242, 254, 0.3), 0 0 60px rgba(0, 242, 254, 0.1);
+}
+
+/* custom styles for team sliders (con) */
+.team-con input[type="range"]::-webkit-slider-thumb {
+  background: var(--color-con);
+  box-shadow: 0 0 10px var(--color-con), 0 0 20px rgba(255, 0, 127, 0.15);
+}
+.team-con input[type="range"]::-webkit-slider-thumb:hover {
+  background: #ff007f;
+  box-shadow: 0 0 18px #ff007f, 0 0 35px rgba(255, 0, 127, 0.3), 0 0 60px rgba(255, 0, 127, 0.1);
+}
+
+/* Private Strategy Discussion Bubbles */
+.message-discussion .message-bubble {
+  background: rgba(15, 23, 42, 0.96);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.message-pro.message-discussion .message-bubble {
+  border: 1.5px dashed var(--color-pro);
+  border-left: 4px dashed var(--color-pro);
+  border-top-left-radius: 0;
+}
+
+.message-con.message-discussion .message-bubble {
+  border: 1.5px dashed var(--color-con);
+  border-right: 4px dashed var(--color-con);
+  border-top-right-radius: 0;
+}
+
+/* Discussion Badge */
+.discussion-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.45rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: var(--radius-sm);
+  color: #f59e0b;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: var(--font-mono);
+}
+
+
+
+/* ─── Section 14: Arena View (Right Panel) ─────────────────────── */
+.arena-view {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ─── Section 15: Debater Pods — Esports Player Cards ──────────── */
+.debater-pods {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  background: linear-gradient(to bottom, rgba(8, 12, 20, 0.85), rgba(8, 12, 20, 0.2));
+  border-bottom: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+/* Grid layouts based on pod count */
+.debater-pods.pods-2 { grid-template-columns: 1fr 1fr; }
+.debater-pods.pods-3 { grid-template-columns: 1fr 1fr 1fr; }
+.debater-pods.pods-4 { grid-template-columns: 1fr 1fr; }
+.debater-pods.pods-5, .debater-pods.pods-6 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* Pod — Vertical Portrait Card Layout */
+.pod {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  transition: all var(--transition-smooth);
+  position: relative;
+  overflow: visible;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+}
+
+/* Top accent bar */
+.pod::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.pod.pod-pro::before {
+  background: linear-gradient(to right, var(--color-pro), #0052d4);
+}
+.pod.pod-con::before {
+  background: linear-gradient(to right, var(--color-con), #8a2387);
+}
+
+/* Pod Avatar Ring wrapper */
+.pod-avatar-ring {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: transform var(--transition-smooth);
+}
+
+.pod:hover .pod-avatar-ring {
+  transform: scale(1.05);
+}
+
+/* Pseudo-element for the holographic spinning ring - static by default */
+.pod-avatar-ring::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08); /* clean static border when inactive */
+  transition: background var(--transition-smooth), opacity var(--transition-smooth);
+  z-index: 1;
+}
+
+.pod-pro .pod-avatar-ring::before {
+  background: rgba(0, 242, 254, 0.15); /* static cyan ring */
+}
+
+.pod-con .pod-avatar-ring::before {
+  background: rgba(255, 0, 127, 0.15); /* static pink ring */
+}
+
+/* Active pod: spinning holographic conic gradient on the pseudo-element only (leaves child static!) */
+.pod.active .pod-avatar-ring::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(0, 242, 254, 0.4) 60deg,
+    transparent 120deg,
+    rgba(255, 0, 127, 0.3) 180deg,
+    transparent 240deg,
+    rgba(255, 183, 3, 0.3) 300deg,
+    transparent 360deg
+  );
+  animation: holoSpin var(--holo-speed) linear infinite;
+}
+
+.pod.active.pod-pro .pod-avatar-ring::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--color-pro) 90deg,
+    transparent 180deg,
+    var(--color-pro) 270deg,
+    transparent 360deg
+  );
+}
+
+.pod.active.pod-con .pod-avatar-ring::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    var(--color-con) 90deg,
+    transparent 180deg,
+    var(--color-con) 270deg,
+    transparent 360deg
+  );
+}
+
+/* Pod Avatar — larger with holographic ring */
+.pod-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.85rem;
+  position: relative;
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+  z-index: 2;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.pod-pro .pod-avatar {
+  border: 2px solid var(--color-pro);
+  color: var(--color-pro);
+  box-shadow: 0 0 15px var(--color-pro-glow), inset 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+.pod-con .pod-avatar {
+  border: 2px solid var(--color-con);
+  color: var(--color-con);
+  box-shadow: 0 0 15px var(--color-con-glow), inset 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+.pod-info {
+  flex-grow: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pod-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 0.3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  max-width: 100%;
+}
+
+/* Team badge/chip */
+.pod-team-chip {
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.pod-chip-pro {
+  color: var(--color-pro);
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+}
+
+.pod-chip-con {
+  color: var(--color-con);
+  background: rgba(255, 0, 127, 0.1);
+  border: 1px solid rgba(255, 0, 127, 0.2);
+}
+
+/* Model pill */
+.pod-model {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: #94a3b8;
+  display: inline-block;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/* Layout compression for 4+ models */
+.debater-pods.pods-4, .debater-pods.pods-5, .debater-pods.pods-6 {
+  padding: 1rem;
+  gap: 0.85rem;
+}
+.debater-pods.pods-4 .pod, .debater-pods.pods-5 .pod, .debater-pods.pods-6 .pod {
+  padding: 1rem 0.85rem;
+}
+.debater-pods.pods-4 .pod-avatar-ring, .debater-pods.pods-5 .pod-avatar-ring, .debater-pods.pods-6 .pod-avatar-ring {
+  width: 60px;
+  height: 60px;
+}
+.debater-pods.pods-4 .pod-avatar, .debater-pods.pods-5 .pod-avatar, .debater-pods.pods-6 .pod-avatar {
+  width: 52px;
+  height: 52px;
+  font-size: 1.35rem;
+}
+.debater-pods.pods-4 .pod-name, .debater-pods.pods-5 .pod-name, .debater-pods.pods-6 .pod-name {
+  font-size: 0.9rem;
+}
+
+/* Pod Active States — Dramatic Glow */
+.pod.active {
+  background: rgba(30, 41, 59, 0.45);
+  transform: scale(1.03) translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  z-index: 2;
+}
+
+.pod.active.pod-pro {
+  border-color: rgba(0, 242, 254, 0.6);
+  background: rgba(0, 242, 254, 0.06);
+  animation: pulse-pro 2s infinite ease-in-out;
+  box-shadow: 0 0 30px rgba(0, 242, 254, 0.3), 0 0 60px rgba(0, 242, 254, 0.1), 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.pod.active.pod-con {
+  border-color: rgba(255, 0, 127, 0.6);
+  background: rgba(255, 0, 127, 0.06);
+  animation: pulse-con 2s infinite ease-in-out;
+  box-shadow: 0 0 30px rgba(255, 0, 127, 0.3), 0 0 60px rgba(255, 0, 127, 0.1), 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.pod.pod-pro.active {
+  border-color: rgba(0, 242, 254, 0.6);
+}
+
+.pod.pod-con.active {
+  border-color: rgba(255, 0, 127, 0.6);
+}
+
+
+/* ─── Section 16: Thinking Wave Indicator ──────────────────────── */
+.thinking-wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 20px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  /* On active pods, reposition as overlay in top-right */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 5;
+}
+
+.active .thinking-wave {
+  opacity: 1;
+}
+
+.thinking-wave span {
+  width: 3px;
+  height: 8px;
+  background-color: currentColor;
+  border-radius: 3px;
+  animation: waveBounce 1.2s ease-in-out infinite;
+}
+
+.pod-pro .thinking-wave span { background-color: var(--color-pro); }
+.pod-con .thinking-wave span { background-color: var(--color-con); }
+
+.thinking-wave span:nth-child(2) { animation-delay: 0.15s; }
+.thinking-wave span:nth-child(3) { animation-delay: 0.3s; }
+.thinking-wave span:nth-child(4) { animation-delay: 0.45s; }
+
+/* LIVE indicator element - hidden by default */
+.pod-live-indicator {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3px 8px;
+  border-radius: 9999px;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity var(--transition-smooth), transform var(--transition-smooth);
+  z-index: 10;
+}
+
+.pod.active .pod-live-indicator {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444, 0 0 20px rgba(239, 68, 68, 0.3);
+  animation: pulseGlow 1.5s infinite;
+  display: inline-block;
+}
+
+.pod-pro .live-dot {
+  background: var(--color-pro);
+  box-shadow: 0 0 8px var(--color-pro), 0 0 20px rgba(0, 242, 254, 0.3);
+}
+
+.pod-con .live-dot {
+  background: var(--color-con);
+  box-shadow: 0 0 8px var(--color-con), 0 0 20px rgba(255, 0, 127, 0.3);
+}
+
+.live-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.08em;
+  line-height: 1;
+}
+
+
+/* ─── Section 17: Debate Feed (Chat Scroll) ────────────────────── */
+.debate-feed {
+  overflow-y: auto;
+  padding: 1.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  scroll-behavior: smooth;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.feed-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  text-align: center;
+  gap: 1.25rem;
+}
+
+.feed-empty-icon {
+  font-size: 4.5rem;
+  opacity: 0.25;
+  filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.1));
+}
+
+.feed-empty p {
+  color: var(--text-muted);
+}
+
+
+/* ─── Section 18: Messages — Premium Chat Bubbles ──────────────── */
+.message {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  max-width: 85%;
+  animation: messageSlideIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+}
+
+.message-pro {
+  align-self: flex-start;
+}
+
+.message-con {
+  align-self: flex-end;
+  grid-template-columns: 1fr auto;
+  direction: ltr;
+  text-align: right;
+  max-width: 85%;
+}
+
+.message-con .message-bubble-wrapper {
+  grid-column: 1;
+  text-align: left;
+}
+
+.message-con .message-avatar {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+/* Message Avatar with team-colored pulsing ring */
+.message-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.3);
+  transition: all var(--transition-fast);
+}
+
+.message-pro .message-avatar {
+  border: 2px solid var(--color-pro);
+  color: var(--color-pro);
+  box-shadow: 0 0 12px var(--color-pro-glow), 0 0 25px rgba(0, 242, 254, 0.08), inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.message-con .message-avatar {
+  border: 2px solid var(--color-con);
+  color: var(--color-con);
+  box-shadow: 0 0 12px var(--color-con-glow), 0 0 25px rgba(255, 0, 127, 0.08), inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Message Bubble */
+.message-bubble {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 1.25rem 1.4rem;
+  line-height: 1.65;
+  font-size: 0.95rem;
+  position: relative;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.message-bubble:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+/* Pro bubble — cyan glow on left edge */
+.message-pro .message-bubble {
+  border-top-left-radius: 0;
+  border-left: 4px solid var(--color-pro);
+  box-shadow:
+    inset 4px 0 12px rgba(0, 242, 254, 0.06),
+    0 6px 24px rgba(0, 0, 0, 0.3),
+    -4px 0 20px rgba(0, 242, 254, 0.06);
+}
+
+.message-pro .message-bubble:hover {
+  box-shadow:
+    inset 4px 0 16px rgba(0, 242, 254, 0.1),
+    0 8px 28px rgba(0, 0, 0, 0.35),
+    -6px 0 30px rgba(0, 242, 254, 0.1);
+}
+
+/* Con bubble — pink glow on right edge */
+.message-con .message-bubble {
+  border-top-right-radius: 0;
+  border-right: 4px solid var(--color-con);
+  box-shadow:
+    inset -4px 0 12px rgba(255, 0, 127, 0.06),
+    0 6px 24px rgba(0, 0, 0, 0.3),
+    4px 0 20px rgba(255, 0, 127, 0.06);
+}
+
+.message-con .message-bubble:hover {
+  box-shadow:
+    inset -4px 0 16px rgba(255, 0, 127, 0.1),
+    0 8px 28px rgba(0, 0, 0, 0.35),
+    6px 0 30px rgba(255, 0, 127, 0.1);
+}
+
+.message-meta {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  font-weight: 500;
+}
+
+.message-con .message-meta {
+  justify-content: flex-end;
+}
+
+.message-speaker {
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.message-pro .message-speaker { color: var(--color-pro); }
+.message-con .message-speaker { color: var(--color-con); }
+
+.message-content {
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #e2e8f0;
+}
+
+.message-content p {
+  margin-bottom: 0.75rem;
+}
+.message-content p:last-child {
+  margin-bottom: 0;
+}
+
+.message-content strong {
+  color: #fff;
+  font-weight: 700;
+}
+.message-content code {
+  font-family: var(--font-mono);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 0.15rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.82em;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+}
+
+
+/* ─── Section 19: Moderator Messages ───────────────────────────── */
+.message-mod {
+  grid-template-columns: 1fr;
+  max-width: 90%;
+  align-self: center;
+  text-align: center;
+}
+
+/* Gold ornate border with sparkle shadow */
+.message-mod .message-bubble {
+  background: rgba(255, 183, 3, 0.04);
+  border: 1px solid rgba(255, 183, 3, 0.4);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 0 20px rgba(255, 183, 3, 0.08),
+    0 0 40px rgba(255, 183, 3, 0.03),
+    inset 0 0 15px rgba(255, 183, 3, 0.03),
+    0 4px 20px rgba(0, 0, 0, 0.25);
+  position: relative;
+}
+
+/* Ornate corner accents (subtle) */
+.message-mod .message-bubble::before {
+  content: '✦';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--color-mod);
+  font-size: 0.65rem;
+  opacity: 0.5;
+  text-shadow: 0 0 8px rgba(255, 183, 3, 0.5);
+}
+
+.message-mod .message-meta {
+  justify-content: center;
+}
+
+.message-mod .message-speaker {
+  color: var(--color-mod);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+
+
+
+/* ─── Section 21: Typing Indicator ─────────────────────────────── */
+.typing-dots {
+  display: flex;
+  gap: 5px;
+  padding: 0.35rem 0.75rem;
+  align-items: center;
+}
+
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  background-color: var(--text-muted);
+  border-radius: 50%;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+
+
+
+/* ─── Section 23: Modals — Cinematic Overlays ──────────────────── */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(2, 6, 17, 0.85);
+  backdrop-filter: blur(0px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, backdrop-filter 0.5s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+  backdrop-filter: blur(20px) saturate(1.1);
+}
+
+/* Modal - Clean & Minimal */
+.modal {
+  background: #0b0f19;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 680px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
+  transform: scale(0.95);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-overlay.active .modal {
+  transform: scale(1);
+}
+
+/* Modal Tab System */
+.modal-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 1.5rem;
+  gap: 1.5rem;
+}
+
+.modal-tab-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 1rem 0.25rem;
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.modal-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.modal-tab-btn.active {
+  color: var(--color-pro);
+}
+
+.modal-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--color-pro), #0072ff);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.6);
+}
+
+.modal-tab-content {
+  display: none;
+}
+
+.modal-tab-content.active {
+  display: block;
+}
+
+/* Modal Header with gradient text */
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff, #00f2fe, #ff007f);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: all var(--transition-fast);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: 1.5rem;
+  max-height: 65vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.modal-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Modal footer primary button — success glow on hover */
+.modal-footer .btn-primary:hover {
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.4), 0 0 50px rgba(0, 242, 254, 0.15), 0 0 80px rgba(16, 185, 129, 0.1);
+}
+
+
+/* ─── Section 24: Modal Debater Cards ──────────────────────────── */
+.modal-debater-card {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  transition: all var(--transition-smooth);
+}
+
+.modal-debater-card:last-child {
+  margin-bottom: 0;
+}
+
+.modal-debater-card.team-pro {
+  border-left: 4px solid var(--color-pro);
+}
+
+.modal-debater-card.team-con {
+  border-left: 4px solid var(--color-con);
+}
+
+/* Hover lift + glow */
+.modal-debater-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-debater-card.team-pro:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 25px rgba(0, 242, 254, 0.12);
+  border-color: rgba(0, 242, 254, 0.3);
+}
+
+.modal-debater-card.team-con:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 0 25px rgba(255, 0, 127, 0.12);
+  border-color: rgba(255, 0, 127, 0.3);
+}
+
+.modal-debater-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 0.65rem;
+  margin-bottom: 0.85rem;
+}
+
+.modal-debater-card-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#modal-debaters .modal {
+  max-width: 960px;
+}
+
+.modal-debater-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 820px) {
+  .modal-debater-card-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+
+/* ─── Section 25: API Key Settings (Modal) ─────────────────────── */
+.api-key-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  padding-bottom: 0.75rem;
+}
+
+.api-key-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.api-key-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.4rem;
+}
+
+.api-provider-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.api-status {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  transition: color var(--transition-fast);
+}
+
+.api-status.configured { color: #10b981; }
+.api-status.missing { color: #f59e0b; }
+
+.api-input-wrap {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.api-input-wrap input {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding-right: 2rem;
+}
+
+.toggle-visibility-btn {
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.2rem;
+  transition: color var(--transition-fast);
+}
+
+.toggle-visibility-btn:hover {
+  color: #fff;
+}
+
+.help-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
+  line-height: 1.4;
+}
+
+
+/* ─── Section 26: Scorecard & Verdict Display ──────────────────── */
+.verdict-card {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(24px);
+  border: 2px solid var(--color-mod);
+  border-radius: 22px;
+  padding: 2.25rem;
+  box-shadow:
+    0 0 40px rgba(255, 183, 3, 0.15),
+    0 0 80px rgba(255, 183, 3, 0.05),
+    0 20px 50px rgba(0, 0, 0, 0.55);
+  max-width: 650px;
+  width: 95%;
+  margin: 2rem auto;
+  animation: modalSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Confetti shimmer sweep on verdict card */
+.verdict-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 183, 3, 0.06) 40%,
+    rgba(0, 242, 254, 0.04) 45%,
+    rgba(255, 0, 127, 0.04) 50%,
+    rgba(255, 183, 3, 0.06) 55%,
+    transparent 65%
+  );
+  background-size: 200% 200%;
+  animation: shimmerSweep 4s linear infinite;
+  pointer-events: none;
+  border-radius: 22px;
+}
+
+.verdict-title {
+  text-align: center;
+  color: var(--color-mod);
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  text-shadow: 0 0 15px rgba(255, 183, 3, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.verdict-winner {
+  text-align: center;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 1.75rem;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.verdict-winner-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 0.35rem;
+}
+
+.verdict-winner-name {
+  font-size: 2.1rem;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.winner-pro {
+  color: var(--color-pro);
+  text-shadow: 0 0 20px var(--color-pro-glow), 0 0 40px rgba(0, 242, 254, 0.1);
+}
+
+.winner-con {
+  color: var(--color-con);
+  text-shadow: 0 0 20px var(--color-con-glow), 0 0 40px rgba(255, 0, 127, 0.1);
+}
+
+.winner-draw {
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
+}
+
+.scorecard-metrics {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.4rem;
+  margin-bottom: 1.75rem;
+  position: relative;
+  z-index: 1;
+}
+
+.metric-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.metric-bar-container {
+  height: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.metric-bar-pro {
+  height: 100%;
+  position: absolute;
+  left: 0;
+  background: linear-gradient(90deg, #0072ff, var(--color-pro));
+  box-shadow: 0 0 12px var(--color-pro);
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.metric-bar-con {
+  height: 100%;
+  position: absolute;
+  right: 0;
+  background: linear-gradient(270deg, #8a2387, var(--color-con));
+  box-shadow: 0 0 12px var(--color-con);
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.verdict-summary {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: #cbd5e1;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  max-height: 280px;
+  overflow-y: auto;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.25);
+  position: relative;
+  z-index: 1;
+}
+
+.verdict-summary h4 {
+  color: var(--color-mod);
+  margin-bottom: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+
+/* ─── Section 27: Badges ───────────────────────────────────────── */
+.info-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-family: var(--font-mono);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-fast);
+}
+
+.badge-status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all var(--transition-fast);
+}
+
+.status-idle {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+/* Status running — live animated ring pulse */
+.status-running {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
+  animation: statusRingPulse 2s infinite, pulseGlow 2s infinite;
+  position: relative;
+}
+
+.status-paused {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+
+/* ─── Section 28: Strategic Reasoning Stream ───────────────────── */
+.thought-details {
+  background: #020617;
+  border: 1px solid rgba(0, 242, 254, 0.15);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  color: var(--color-pro);
+  text-align: left;
+  transition: all var(--transition-fast);
+  box-shadow: inset 0 0 10px rgba(0, 242, 254, 0.05);
+}
+
+.thought-details[open] {
+  border-color: var(--color-pro);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.15), inset 0 0 15px rgba(0, 242, 254, 0.08);
+}
+
+.message-con .thought-details {
+  border-color: rgba(255, 0, 127, 0.15);
+  color: var(--color-con);
+  box-shadow: inset 0 0 10px rgba(255, 0, 127, 0.05);
+}
+
+.message-con .thought-details[open] {
+  border-color: var(--color-con);
+  box-shadow: 0 0 20px rgba(255, 0, 127, 0.15), inset 0 0 15px rgba(255, 0, 127, 0.08);
+}
+
+.thought-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  outline: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: 0.02em;
+  transition: color var(--transition-fast);
+}
+
+.thought-details summary:hover {
+  filter: brightness(1.2);
+}
+
+.thought-content {
+  margin-top: 0.65rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 0.65rem;
+  color: #38bdf8; /* Soft blue terminal text */
+  line-height: 1.6;
+  white-space: pre-wrap;
+  position: relative;
+}
+
+.message-con .thought-content {
+  color: #f472b6; /* Soft pink terminal text */
+}
+
+/* Blinking caret cursor simulation */
+.thought-content::after {
+  content: '▋';
+  display: inline-block;
+  color: currentColor;
+  margin-left: 2px;
+  animation: terminalCursor 1s steps(2, start) infinite;
+}
+
+
+/* ─── Section 29: Responsive Overrides ─────────────────────────── */
+
+/* Tablet & smaller laptops */
+@media (max-width: 950px) {
+  .app-container {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sidebar {
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .control-panel {
+    position: static;
+    margin-bottom: 1rem;
+    bottom: auto;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .arena-view {
+    height: auto;
+    min-height: calc(100vh - 100px);
+  }
+
+  .debater-pods {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .nav-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .header-settings-btn {
+    font-size: 0.82rem !important;
+    padding: 0.4rem 0.85rem !important;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+  header {
+    padding: 0.85rem 1.25rem;
+  }
+
+  .logo-title h1 {
+    font-size: 1.25rem;
+  }
+
+  .logo-title span {
+    font-size: 0.65rem;
+  }
+
+  /* Modals become near-full-screen with slide-up animation */
+  .modal-overlay.active .modal {
+    width: 100%;
+    max-width: 100%;
+    height: 90vh;
+    max-height: 90vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    transform: translateY(0);
+    animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .modal-overlay {
+    align-items: flex-end;
+  }
+
+  .modal-body {
+    max-height: calc(90vh - 140px);
+  }
+
+  .debate-feed {
+    padding: 1rem 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .message {
+    max-width: 92%;
+  }
+
+  .message-con {
+    max-width: 92%;
+  }
+
+  .debater-pods {
+    grid-template-columns: 1fr 1fr !important;
+    padding: 0.85rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  header {
+    padding: 0.65rem 0.85rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .logo-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+  }
+
+  .logo-title h1 {
+    font-size: 1.1rem;
+  }
+
+  .logo-title span {
+    font-size: 0.6rem;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .header-settings-btn {
+    font-size: 0.75rem !important;
+    padding: 0.35rem 0.65rem !important;
+  }
+
+  .sidebar {
+    padding: 1rem;
+    gap: 0.85rem;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .section-title {
+    font-size: 0.72rem;
+  }
+
+  .debater-pods {
+    grid-template-columns: 1fr !important;
+    padding: 0.65rem;
+    gap: 0.6rem;
+  }
+
+  .pod {
+    padding: 1rem 0.85rem;
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .pod-avatar-ring {
+    width: 56px;
+    height: 56px;
+  }
+
+  .pod-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1.35rem;
+  }
+
+  .pod-info {
+    align-items: flex-start;
+  }
+
+  .pod-name {
+    font-size: 0.92rem;
+  }
+
+  .debate-feed {
+    padding: 0.85rem;
+    gap: 1rem;
+  }
+
+  .message-bubble {
+    padding: 1rem 1.1rem;
+    font-size: 0.88rem;
+    border-radius: 14px;
+  }
+
+  .message-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+  }
+
+
+  .verdict-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+
+  .verdict-winner-name {
+    font-size: 1.6rem;
+  }
+
+  .verdict-title {
+    font-size: 1.3rem;
+  }
+
+  .modal-overlay.active .modal {
+    height: 95vh;
+    max-height: 95vh;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .modal-header {
+    padding: 1rem;
+  }
+
+  .modal-body {
+    padding: 1rem;
+    max-height: calc(95vh - 120px);
+  }
+
+  .modal-footer {
+    padding: 1rem;
+  }
+
+  .controls-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .control-panel {
+    padding: 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
+
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.82rem;
+  }
+
+  .btn-primary {
+    font-size: 0.85rem;
+  }
+
+  select, input, textarea {
+    font-size: 0.85rem;
+    padding: 0.55rem;
+  }
+
+  label {
+    font-size: 0.8rem;
+  }
+}
+
+/* Ultra-small screens */
+@media (max-width: 360px) {
+  .logo-container {
+    gap: 0.5rem;
+  }
+
+  .logo-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+    border-radius: 8px;
+  }
+
+  .logo-title h1 {
+    font-size: 0.95rem;
+  }
+
+  .verdict-card {
+    padding: 1.15rem;
+  }
+
+  .verdict-winner-name {
+    font-size: 1.35rem;
+  }
+}
+
+
+/* ─── Section 30: Utility & Selection ──────────────────────────── */
+::selection {
+  background: rgba(0, 242, 254, 0.25);
+  color: #fff;
+}
+
+::-moz-selection {
+  background: rgba(0, 242, 254, 0.25);
+  color: #fff;
+}
+
+/* Smooth transitions on all interactive elements */
+a, button, input, select, textarea, .btn, .card, .pod, .modal-debater-card, .header-settings-btn {
+  transition: all var(--transition-fast);
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Section 31: UI/UX Refinements V3 ─────────────────────────── */
+
+/* 1. Onboarding steps guide styling */
+.onboarding-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 500px;
+  width: 100%;
+  margin: 1.5rem auto;
+  text-align: left;
+}
+
+.onboarding-step {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.85rem 1.15rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.onboarding-step:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.6);
+}
+
+.onboarding-step.completed {
+  background: rgba(0, 242, 254, 0.03);
+  border-color: rgba(0, 242, 254, 0.2);
+  box-shadow: inset 0 0 10px rgba(0, 242, 254, 0.03);
+}
+
+.onboarding-step.completed h3 {
+  color: var(--color-pro);
+}
+
+.step-status {
+  font-size: 1.35rem;
+  font-family: var(--font-mono);
+  min-width: 28px;
+  text-align: center;
+}
+
+.step-details h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem 0;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.step-details p {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.inline-settings-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-main);
+}
+
+.inline-settings-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+.feed-empty-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* 2. Security notice disclaimer */
+.security-notice-disclaimer {
+  font-size: 0.78rem;
+  background: rgba(245, 158, 11, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  padding: 0.75rem 0.95rem;
+  border-radius: var(--radius-sm);
+  color: #f59e0b;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+/* 3. Read only summary display on active debates */
+.read-only-display {
+  display: none;
+  padding: 0.25rem 0;
+}
+
+body.debate-active .topic-form-content,
+body.debate-active .rules-form-content {
+  display: none !important;
+}
+
+body.debate-active .read-only-display {
+  display: block !important;
+  animation: fadeIn 0.4s ease-out;
+}
+
+body.debate-active .sidebar .card {
+  border-left-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  background: rgba(15, 23, 42, 0.3);
+}
+
+/* 4. Interactive player pods active scale & dimming */
+.debater-pods {
+  transition: all 0.4s ease;
+}
+
+/* Dim non-speaking pods when a pod is active */
+.debater-pods:has(.pod.active) .pod:not(.active) {
+  opacity: 0.35;
+  filter: grayscale(40%) blur(0.5px);
+  transform: scale(0.96);
+  box-shadow: none;
+  border-color: rgba(255, 255, 255, 0.02);
+}
+
+.debater-pods .pod {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── Section 25: SideRays WebGL Viewport Background ──────────── */
+#side-rays-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+

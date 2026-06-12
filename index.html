@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Debate Arena - Multi-Agent LLM Simulator</title>
+  <meta name="description" content="Watch up to 6 AI models debate each other in real-time. Direct browser-to-LLM integration supporting 10 API providers.">
+  <link rel="stylesheet" href="style.css?v=3.0">
+</head>
+<body>
+  <div id="side-rays-bg"></div>
+
+  <!-- Header Section -->
+  <header>
+    <div class="logo-container">
+      <div class="logo-icon">⚔️</div>
+      <div class="logo-title">
+        <h1>AI Debate Arena</h1>
+        <span>Multi-Agent Simulator</span>
+      </div>
+    </div>
+    
+    <div class="nav-actions">
+      <button id="btn-export-md" class="btn btn-sm" disabled title="Export Debate as Markdown">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export MD
+      </button>
+      <button id="btn-settings-toggle" class="btn header-settings-btn" title="Configure Arena Settings, Models & Credentials">
+        ⚙️
+        <span>Settings</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Application Container -->
+  <div class="app-container">
+    
+    <!-- Left Panel: Sidebar Settings -->
+    <aside class="sidebar">
+      
+      <!-- Preset Selection -->
+      <div class="card">
+        <h2 class="section-title">Debate Topic</h2>
+        <div class="topic-form-content">
+          <div class="form-group">
+            <label for="select-preset">Load Preset Topic</label>
+            <select id="select-preset">
+              <option value="custom">-- Custom Topic --</option>
+              <!-- Dynamically populated -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="input-topic-title">Title</label>
+            <input type="text" id="input-topic-title" placeholder="Topic Title" value="">
+          </div>
+          <div class="form-group">
+            <label for="input-topic-desc">Premise / Core Question</label>
+            <textarea id="input-topic-desc" placeholder="What is the core point of contention?"></textarea>
+          </div>
+        </div>
+        <div class="read-only-display" id="display-topic-content"></div>
+      </div>
+
+      <!-- Format & Rules -->
+      <div class="card">
+        <h2 class="section-title">Rules & Format</h2>
+        <div class="rules-form-content">
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input type="checkbox" id="check-mod-enabled" checked style="width: auto;">
+              Enable AI Moderator / Judge
+            </label>
+          </div>
+          <div id="moderator-subsettings">
+            <div class="form-group">
+              <label for="select-mod-style">Moderation Style</label>
+              <select id="select-mod-style">
+                <!-- Dynamically populated -->
+              </select>
+            </div>
+          </div>
+          <div class="form-group" id="grp-team-discussion" style="display: none;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input type="checkbox" id="check-discussion-enabled" style="width: auto;">
+              Enable Team Discussion
+            </label>
+          </div>
+          <div class="form-group" style="margin-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 0.75rem;">
+            <div style="display: flex; justify-content: space-between;">
+              <label for="input-rounds">Debate Rounds (Per Model)</label>
+              <span id="val-rounds" style="font-family: var(--font-mono); font-size: 0.8rem;">2</span>
+            </div>
+            <input type="range" id="input-rounds" min="1" max="5" step="1" value="2">
+          </div>
+        </div>
+        <div class="read-only-display" id="display-rules-summary"></div>
+      </div>
+
+      <!-- Control Panel -->
+      <div class="control-panel">
+        <button id="btn-start" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Start Debate
+        </button>
+        <div class="controls-grid">
+          <button id="btn-pause" class="btn" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            Pause
+          </button>
+          <button id="btn-step" class="btn" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            Step Turn
+          </button>
+        </div>
+        <button id="btn-reset" class="btn btn-danger btn-sm">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+          Reset Arena
+        </button>
+      </div>
+
+    </aside>
+
+    <!-- Right Panel: Arena View -->
+    <main class="arena-view">
+      
+      <!-- Virtual Stage: Debater Pods Grid (Populated dynamically V2) -->
+      <section id="debater-pods" class="debater-pods">
+        <!-- Pod cards injected dynamically by app.js -->
+      </section>
+
+      <!-- Scrollable Debate Log Feed -->
+      <section id="debate-feed" class="debate-feed">
+        <!-- Default State: Empty Feed Guide -->
+        <div id="feed-empty-guide" class="feed-empty">
+          <div class="feed-empty-header">
+            <div class="feed-empty-icon">⚖️</div>
+            <h2>AI Debate Arena</h2>
+            <p class="feed-empty-subtitle">Set up your simulation parameters to begin the faceoff</p>
+          </div>
+          
+          <div class="onboarding-steps">
+            <div class="onboarding-step" id="step-topic">
+              <div class="step-status">⏳</div>
+              <div class="step-details">
+                <h3>1. Choose Topic & Premise</h3>
+                <p>Define what the AI agents will debate in the sidebar form.</p>
+              </div>
+            </div>
+            
+            <div class="onboarding-step" id="step-configure">
+              <div class="step-status">⏳</div>
+              <div class="step-details">
+                <h3>2. Configure Models & Keys</h3>
+                <p>Click the <button id="btn-onboarding-settings" class="inline-settings-btn">⚙️ Settings</button> button to set models and API keys.</p>
+              </div>
+            </div>
+            
+            <div class="onboarding-step" id="step-launch">
+              <div class="step-status">⏳</div>
+              <div class="step-details">
+                <h3>3. Start Debate</h3>
+                <p>Once steps 1 and 2 are ready, click "Start Debate" below the sidebar.</p>
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+            <span class="info-badge">🔒 Browser Storage Only</span>
+            <span class="info-badge">🤝 Team Defense Mode</span>
+            <span class="info-badge">⚡ 10 AI Providers</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Arena Settings Modal -->
+  <div id="modal-debaters" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-debaters-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-debaters-title">⚙️ Arena Settings</h3>
+        <button id="btn-header-close-debaters" class="modal-close" aria-label="Close settings modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Security Notice -->
+        <div class="security-notice-disclaimer">
+          🔐 <strong>Local-First & Secure:</strong> All API keys are saved strictly in your browser's local storage and sent directly to the model provider endpoints. No backend server collects your data.
+        </div>
+        <div id="modal-debaters-settings" style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <!-- Dynamically populated Moderator & Debater config cards in app.js -->
+        </div>
+        <button id="btn-modal-add-debater" class="btn btn-sm btn-primary" style="width: 100%; margin-top: 1.5rem; justify-content: center; gap: 0.25rem;">
+          <span>➕</span> Add AI Debater
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-close-debaters" class="btn btn-sm">Cancel</button>
+        <button id="btn-save-debaters" class="btn btn-primary btn-sm" style="padding: 0.5rem 1.25rem;">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Presets & Main App Logic -->
+  <script src="presets.js?v=3.0"></script>
+  <script src="app.js?v=3.0"></script>
+  <script type="module">
+    import { initSideRays } from './sideRays.js';
+    initSideRays(document.getElementById('side-rays-bg'), {
+      speed: 2.5,
+      rayColor1: '#EAB308',
+      rayColor2: '#96c8ff',
+      intensity: 3.5,
+      spread: 2.2,
+      origin: 'top-right',
+      tilt: 0,
+      saturation: 1.5,
+      blend: 0.75,
+      falloff: 1.3,
+      opacity: 1.0
+    });
+  </script>
+</body>
+</html>
