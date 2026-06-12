@@ -942,6 +942,16 @@ export function updateUIForState() {
     elements.grpTeamDiscussion.style.display = showTeamDiscussion ? 'block' : 'none';
   }
 
+  if (elements.checkRebuttalEnabled) {
+    elements.checkRebuttalEnabled.disabled = disableForm;
+  }
+  if (elements.selectRebuttalLimit) {
+    elements.selectRebuttalLimit.disabled = disableForm;
+  }
+  if (elements.grpRebuttalLimit) {
+    elements.grpRebuttalLimit.style.display = debateState.rebuttalEnabled ? 'block' : 'none';
+  }
+
   const hasTopic = (elements.inputTopicTitle.value.trim().length > 0) && (elements.inputTopicDesc.value.trim().length > 0);
   const stepTopic = document.getElementById('step-topic');
   if (stepTopic) {
@@ -1001,11 +1011,15 @@ export function updateUIForState() {
     const discEnabled = elements.checkDiscussionEnabled && elements.checkDiscussionEnabled.checked;
     const roastEnabled = elements.checkRoastEnabled && elements.checkRoastEnabled.checked;
     
+    const rebuttalEnabled = debateState.rebuttalEnabled;
+    const rebuttalLimitText = debateState.rebuttalLimit;
+    
     let summaryHtml = `<div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; color: var(--text-muted);">`;
     summaryHtml += `<div>Debate Mode: <strong style="color: var(--text-main);">${debateModeText}</strong></div>`;
     summaryHtml += `<div>Rounds Per Debater: <strong style="color: var(--text-main); font-family: var(--font-mono);">${rounds}</strong></div>`;
     summaryHtml += `<div>AI Moderator & Judge: <strong style="color: var(--text-main);">${modEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Roasting Mode: <strong style="color: var(--text-main);">${roastEnabled ? '🔥 Enabled' : 'Disabled'}</strong></div>`;
+    summaryHtml += `<div>Rebuttal Phase: <strong style="color: var(--text-main);">${rebuttalEnabled ? 'Enabled (Max ' + rebuttalLimitText + ' Qs)' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Team Discussion: <strong style="color: var(--text-main);">${discEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `</div>`;
     displayRulesSummary.innerHTML = summaryHtml;

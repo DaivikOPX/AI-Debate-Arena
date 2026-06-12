@@ -57,12 +57,14 @@ export function buildTurnSequence() {
     });
     
     // Moderator Transition between Standard Round and Rebuttal Round
-    if (modEnabled) {
+    if (modEnabled && debateState.rebuttalEnabled) {
       seq.push({ type: 'mod-transition', round: r, phase: 'standard-to-rebuttal' });
     }
     
     // 2. Rebuttal Phase
-    seq.push({ type: 'rebuttal-phase', round: r });
+    if (debateState.rebuttalEnabled) {
+      seq.push({ type: 'rebuttal-phase', round: r });
+    }
     
     // 3. Team Strategy Discussion Phase
     if (discussionEnabled && debateState.debaters.length > 2) {
@@ -70,7 +72,7 @@ export function buildTurnSequence() {
     }
     
     // Moderator Transition between Rebuttal Round and next Standard Round
-    if (modEnabled && r < rounds) {
+    if (modEnabled && debateState.rebuttalEnabled && r < rounds) {
       seq.push({ type: 'mod-transition', round: r, phase: 'rebuttal-to-standard' });
     }
   }
@@ -274,6 +276,8 @@ export async function processRebuttalStep(step) {
         con: conDebaters[i % conDebaters.length],
         proPassed: false,
         conPassed: false,
+        proQuestionsAsked: 0,
+        conQuestionsAsked: 0,
         phase: 'pro-ask'
       });
     }
@@ -298,6 +302,14 @@ export async function processRebuttalStep(step) {
 
   const pair = rState.pairs[rState.currentPairIndex];
   
+  // Enforce question limits! If a team has reached the limit, force them to pass.
+  if (pair.proQuestionsAsked >= debateState.rebuttalLimit) {
+    pair.proPassed = true;
+  }
+  if (pair.conQuestionsAsked >= debateState.rebuttalLimit) {
+    pair.conPassed = true;
+  }
+
   if (pair.proPassed && pair.conPassed) {
     rState.currentPairIndex++;
     processRebuttalStep(step);
@@ -392,6 +404,11 @@ export async function processRebuttalStep(step) {
       }
     } else if (rebuttalPhase === 'ask') {
       rState.currentQuestion = historyText;
+      if (activeDebater.team === 'pro') {
+        pair.proQuestionsAsked++;
+      } else {
+        pair.conQuestionsAsked++;
+      }
     }
 
     const cleanHistoryText = finalResponseText.replace(/<thought>[\s\S]*?<\/thought>/gi, "").trim();

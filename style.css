@@ -457,6 +457,11 @@ header {
   overflow: hidden;
   position: relative;
   z-index: 1;
+  transition: grid-template-columns 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.app-container.sidebar-collapsed {
+  grid-template-columns: 0px 1fr;
 }
 
 
@@ -472,6 +477,22 @@ header {
   backdrop-filter: blur(12px);
   position: relative;
   z-index: 2;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-right-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: left;
+}
+
+.app-container.sidebar-collapsed .sidebar {
+  transform: translateX(-100%);
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  padding: 0;
+  border-right-width: 0;
+  overflow: hidden;
 }
 
 .section-title {
@@ -2536,6 +2557,25 @@ body.debate-active .sidebar .card {
   pointer-events: none;
   z-index: 3;
   overflow: hidden;
+}
+
+/* --- Added Sidebar Collapse & Rebuttal Adjustments --- */
+@media (min-width: 951px) {
+  body {
+    height: 100vh;
+    overflow: hidden;
+  }
+}
+
+body.debate-active .sidebar {
+  overflow: hidden !important;
+}
+
+#btn-toggle-sidebar.active {
+  background: rgba(0, 242, 254, 0.15) !important;
+  border-color: rgba(0, 242, 254, 0.6) !important;
+  color: #fff !important;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.3) !important;
 }
 
 

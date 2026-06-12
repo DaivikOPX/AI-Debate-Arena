@@ -20,6 +20,8 @@ export let debateState = {
   },
   teamDiscussionEnabled: false,
   roastEnabled: false,
+  rebuttalEnabled: true,
+  rebuttalLimit: 3,
   ollamaHost: "http://localhost:11434",
   debateMode: "medium",
   abortController: null
@@ -164,3 +166,47 @@ export function loadModeratorFromStorage() {
     elements.checkModEnabled.checked = debateState.moderator.enabled;
   }
 }
+
+export function saveRebuttalSettingsToStorage() {
+  try {
+    const isEnabled = elements.checkRebuttalEnabled ? elements.checkRebuttalEnabled.checked : true;
+    const limit = elements.selectRebuttalLimit ? parseInt(elements.selectRebuttalLimit.value) : 3;
+    localStorage.setItem('ai_debate_rebuttal_enabled', isEnabled ? 'true' : 'false');
+    localStorage.setItem('ai_debate_rebuttal_limit', limit.toString());
+  } catch (e) {
+    console.warn("Storage writing restricted:", e);
+  }
+}
+
+export function loadRebuttalSettingsFromStorage() {
+  try {
+    const savedEnabled = localStorage.getItem('ai_debate_rebuttal_enabled');
+    if (savedEnabled !== null) {
+      debateState.rebuttalEnabled = savedEnabled === 'true';
+      if (elements.checkRebuttalEnabled) {
+        elements.checkRebuttalEnabled.checked = debateState.rebuttalEnabled;
+      }
+    } else {
+      debateState.rebuttalEnabled = true;
+      if (elements.checkRebuttalEnabled) {
+        elements.checkRebuttalEnabled.checked = true;
+      }
+    }
+
+    const savedLimit = localStorage.getItem('ai_debate_rebuttal_limit');
+    if (savedLimit !== null) {
+      debateState.rebuttalLimit = parseInt(savedLimit);
+      if (elements.selectRebuttalLimit) {
+        elements.selectRebuttalLimit.value = debateState.rebuttalLimit.toString();
+      }
+    } else {
+      debateState.rebuttalLimit = 3;
+      if (elements.selectRebuttalLimit) {
+        elements.selectRebuttalLimit.value = "3";
+      }
+    }
+  } catch (e) {
+    console.warn("Storage access restricted:", e);
+  }
+}
+

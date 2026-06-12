@@ -7,10 +7,12 @@ import {
   loadDebateModeFromStorage,
   loadTeamDiscussionFromStorage,
   loadRoastModeFromStorage,
+  loadRebuttalSettingsFromStorage,
   saveDebateModeToStorage,
   saveRoastModeToStorage,
   saveModeratorToStorage,
-  saveTeamDiscussionToStorage
+  saveTeamDiscussionToStorage,
+  saveRebuttalSettingsToStorage
 } from './state.js';
 
 import {
@@ -50,6 +52,9 @@ function initApp() {
   
   elements.checkModEnabled = document.getElementById('check-mod-enabled');
   elements.checkRoastEnabled = document.getElementById('check-roast-enabled');
+  elements.checkRebuttalEnabled = document.getElementById('check-rebuttal-enabled');
+  elements.selectRebuttalLimit = document.getElementById('select-rebuttal-limit');
+  elements.grpRebuttalLimit = document.getElementById('grp-rebuttal-limit');
   elements.checkDiscussionEnabled = document.getElementById('check-discussion-enabled');
   elements.grpTeamDiscussion = document.getElementById('grp-team-discussion');
   
@@ -61,6 +66,7 @@ function initApp() {
   elements.btnStep = document.getElementById('btn-step');
   elements.btnReset = document.getElementById('btn-reset');
   elements.btnExportMd = document.getElementById('btn-export-md');
+  elements.btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
   
   elements.debaterPods = document.getElementById('debater-pods');
   elements.debateFeed = document.getElementById('debate-feed');
@@ -79,6 +85,7 @@ function initApp() {
   loadDebateModeFromStorage();
   loadRoastModeFromStorage();
   loadTeamDiscussionFromStorage();
+  loadRebuttalSettingsFromStorage();
   setupEventListeners();
   updateUIForState();
 }
@@ -129,6 +136,33 @@ function setupEventListeners() {
       debateState.roastEnabled = e.target.checked;
       saveRoastModeToStorage();
       updateUIForState();
+    });
+  }
+
+  if (elements.checkRebuttalEnabled) {
+    elements.checkRebuttalEnabled.addEventListener('change', (e) => {
+      debateState.rebuttalEnabled = e.target.checked;
+      saveRebuttalSettingsToStorage();
+      updateUIForState();
+    });
+  }
+
+  if (elements.selectRebuttalLimit) {
+    elements.selectRebuttalLimit.addEventListener('change', (e) => {
+      debateState.rebuttalLimit = parseInt(e.target.value);
+      saveRebuttalSettingsToStorage();
+      updateUIForState();
+    });
+  }
+
+  if (elements.btnToggleSidebar) {
+    elements.btnToggleSidebar.addEventListener('click', () => {
+      const container = document.querySelector('.app-container');
+      if (container) {
+        container.classList.toggle('sidebar-collapsed');
+        const isCollapsed = container.classList.contains('sidebar-collapsed');
+        elements.btnToggleSidebar.classList.toggle('active', isCollapsed);
+      }
     });
   }
 
