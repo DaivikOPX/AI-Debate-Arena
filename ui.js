@@ -5,7 +5,7 @@ import {
   elements,
   saveDebatersToStorage,
   saveModeratorToStorage
-} from './state.js?v=5.0';
+} from './state.js?v=6.0';
 
 export let tempModalState = {
   debaters: [],
@@ -510,8 +510,9 @@ export function renderSettingsModal() {
       </div>
     </div>
     
-    <div class="modal-debater-card-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-      <div>
+    <div class="modal-debater-card-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <!-- Left Column: Core Identity & Model Configuration -->
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
         <div class="form-group">
           <label>API Provider</label>
           <select id="select-mod-provider-modal">
@@ -519,7 +520,7 @@ export function renderSettingsModal() {
           </select>
         </div>
 
-        <div class="form-group" style="margin-top: 0.5rem;">
+        <div class="form-group">
           <label>Model</label>
           <select id="select-mod-model-modal">
             ${modModelOptions}
@@ -527,7 +528,8 @@ export function renderSettingsModal() {
         </div>
       </div>
 
-      <div>
+      <!-- Right Column: API Credentials & Custom Instructions -->
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
         <div class="form-group">
           <label>API Key</label>
           <div class="api-input-wrap">
@@ -536,14 +538,19 @@ export function renderSettingsModal() {
           </div>
         </div>
 
-        <div class="form-group grp-custom-model" id="grp-mod-custom-model-modal" style="display: ${tempModalState.moderator.model === 'custom' ? 'block' : 'none'}; margin-top: 0.5rem;">
+        <div class="form-group grp-custom-model" id="grp-mod-custom-model-modal" style="display: ${tempModalState.moderator.model === 'custom' ? 'block' : 'none'};">
           <label>Custom Model ID</label>
           <input type="text" id="input-mod-custom-model-modal" value="${escapeHtml(tempModalState.moderator.customModel || '')}" placeholder="e.g., llama3:70b">
         </div>
 
-        <div class="form-group" id="grp-ollama-host-modal" style="display: ${tempModalState.moderator.provider === 'ollama' ? 'block' : 'none'}; margin-top: 0.5rem;">
+        <div class="form-group" id="grp-ollama-host-modal" style="display: ${tempModalState.moderator.provider === 'ollama' ? 'block' : 'none'};">
           <label>Ollama Host URL</label>
           <input type="text" id="input-ollama-host-modal" value="${escapeHtml(tempModalState.moderator.ollamaHost || debateState.ollamaHost || '')}" placeholder="e.g., http://localhost:11434">
+        </div>
+
+        <div class="form-group" style="display: flex; flex-direction: column; flex: 1; margin: 0;">
+          <label>System Instructions (Persona)</label>
+          <textarea id="textarea-mod-instructions-modal" style="flex: 1; min-height: 80px; resize: vertical;" placeholder="Enter custom instructions to define the moderator/judge persona...">${escapeHtml(tempModalState.moderator.instructions || '')}</textarea>
         </div>
       </div>
     </div>
@@ -1012,6 +1019,9 @@ export function saveSettings() {
   if (inputModCustomModel) tempModalState.moderator.customModel = inputModCustomModel.value.trim();
   if (modKeyInput) tempModalState.moderator.apiKey = modKeyInput.value.trim();
   if (ollamaHostInput) tempModalState.moderator.ollamaHost = ollamaHostInput.value.trim();
+  
+  const modInstructionsInput = document.getElementById('textarea-mod-instructions-modal');
+  if (modInstructionsInput) tempModalState.moderator.instructions = modInstructionsInput.value.trim();
 
   // Team balance validation
   const proCount = tempModalState.debaters.filter(d => d.team === 'pro').length;

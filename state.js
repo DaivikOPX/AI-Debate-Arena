@@ -16,7 +16,8 @@ export let debateState = {
     style: "strict-judge",
     provider: "gemini",
     model: "gemini-3.5-flash",
-    apiKey: ""
+    apiKey: "",
+    instructions: ""
   },
   teamDiscussionEnabled: false,
   roastEnabled: false,

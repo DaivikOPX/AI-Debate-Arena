@@ -3,11 +3,11 @@
 import {
   debateState,
   elements
-} from './state.js?v=5.0';
+} from './state.js?v=6.0';
 
 import {
   renderScorecard
-} from './ui.js?v=5.0';
+} from './ui.js?v=6.0';
 
 // We import compileTranscript at runtime/dynamically to avoid circular dependency
 // or we can import it normally if simulator.js doesn't import api.js directly, 
@@ -43,7 +43,7 @@ export async function callSpeakerAPI(debater, step) {
   } else {
     provider = debateState.moderator.provider;
     model = debateState.moderator.model === 'custom' ? debateState.moderator.customModel : debateState.moderator.model;
-    systemInstructions = getModeratorInstructions();
+    systemInstructions = debateState.moderator.instructions || getModeratorInstructions();
     temp = 0.5;
     apiKey = debateState.moderator.apiKey || "";
   }
@@ -246,7 +246,8 @@ export async function callJudgeAPI() {
   const pros = debateState.debaters.filter(d => d.team === 'pro').map(d => d.name).join(', ');
   const cons = debateState.debaters.filter(d => d.team === 'con').map(d => d.name).join(', ');
   
-  const systemPrompt = `You are a professional, neutral, analytical debate judge. Act natural and normal. This is a computer simulation; do not refer to or address an audience, spectators, or a physical hall. Evaluate the team debate. Team Affirmative (Pro) consists of: [${pros}]. Team Negative (Con) consists of: [${cons}]. Deliver a winner and individual team grades (0-100) across 4 pillars.
+  const judgeInstructions = debateState.moderator.instructions ? `\nCustom Evaluation Instructions: ${debateState.moderator.instructions}\n` : "";
+  const systemPrompt = `You are a professional, neutral, analytical debate judge. Act natural and normal. This is a computer simulation; do not refer to or address an audience, spectators, or a physical hall. Evaluate the team debate. Team Affirmative (Pro) consists of: [${pros}]. Team Negative (Con) consists of: [${cons}]. Deliver a winner and individual team grades (0-100) across 4 pillars.${judgeInstructions}
 CRITICAL: Analyze the entire debate transcript carefully. In your summary evaluation, make sure to explicitly analyze the contributions of each individual debater by name, explaining their key arguments, their logic, and how they affected the outcome. If any direct logical contradictions (where a speaker contradicts themselves or their teammates) occurred, highlight them under a 'Contradiction Alerts' section.`;
   
   let contextPrompt = `Here is the complete debate transcript on the topic "${topicTitle}":\n\n${transcript}\n\n`;
