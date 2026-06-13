@@ -3,7 +3,7 @@
 import {
   debateState,
   elements
-} from './state.js?v=7.0';
+} from './state.js?v=8.0';
 
 import {
   highlightSpeakerPod,
@@ -12,13 +12,13 @@ import {
   appendErrorCard,
   updateUIForState,
   renderArenaStage
-} from './ui.js?v=7.0';
+} from './ui.js?v=8.0';
 
 import {
   callSpeakerAPI,
   callJudgeAPI,
   setCompileTranscriptFn
-} from './api.js?v=7.0';
+} from './api.js?v=8.0';
 
 // Setup compileTranscript in api.js at initialization
 setCompileTranscriptFn(compileTranscript);

@@ -3,11 +3,11 @@
 import {
   debateState,
   elements
-} from './state.js?v=7.0';
+} from './state.js?v=8.0';
 
 import {
   renderScorecard
-} from './ui.js?v=7.0';
+} from './ui.js?v=8.0';
 
 // We import compileTranscript at runtime/dynamically to avoid circular dependency
 // or we can import it normally if simulator.js doesn't import api.js directly, 
