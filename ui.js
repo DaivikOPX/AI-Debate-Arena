@@ -1045,6 +1045,9 @@ export function updateUIForState() {
   if (elements.checkJudgeEnabled) {
     elements.checkJudgeEnabled.disabled = disableForm;
   }
+  if (elements.checkThoughtEnabled) {
+    elements.checkThoughtEnabled.disabled = disableForm;
+  }
   if (elements.checkRoastEnabled) {
     elements.checkRoastEnabled.disabled = disableForm;
   }
@@ -1139,6 +1142,7 @@ export function updateUIForState() {
     const debateModeText = elements.selectDebateMode ? elements.selectDebateMode.options[elements.selectDebateMode.selectedIndex]?.text : "Standard";
     const discEnabled = elements.checkDiscussionEnabled && elements.checkDiscussionEnabled.checked;
     const roastEnabled = elements.checkRoastEnabled && elements.checkRoastEnabled.checked;
+    const thoughtEnabled = elements.checkThoughtEnabled ? elements.checkThoughtEnabled.checked : true;
     
     const rebuttalEnabled = debateState.rebuttalEnabled;
     const rebuttalLimitText = debateState.rebuttalLimit;
@@ -1148,6 +1152,7 @@ export function updateUIForState() {
     summaryHtml += `<div>Rounds Per Debater: <strong style="color: var(--text-main); font-family: var(--font-mono);">${rounds}</strong></div>`;
     summaryHtml += `<div>AI Moderator (Host): <strong style="color: var(--text-main);">${modEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>AI Judge: <strong style="color: var(--text-main);">${judgeEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
+    summaryHtml += `<div>AI Reasoning (Thoughts): <strong style="color: var(--text-main);">${thoughtEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Roasting Mode: <strong style="color: var(--text-main);">${roastEnabled ? '🔥 Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Rebuttal Phase: <strong style="color: var(--text-main);">${rebuttalEnabled ? 'Enabled (Max ' + rebuttalLimitText + ' Qs)' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Team Discussion: <strong style="color: var(--text-main);">${discEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;

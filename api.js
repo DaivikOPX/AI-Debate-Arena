@@ -98,11 +98,16 @@ export async function callSpeakerAPI(debater, step) {
       modeDirectives = `Debate Mode: Standard Debate. Deliver a well-structured statement. You are limited to a maximum of 200 words.`;
     }
     
-    const formattingDirectives = [
-      `CRITICAL FORMAT REQUIREMENT: You MUST start your response with an internal reasoning monologue enclosed in <thought>...</thought> tags.`,
-      `In this monologue, analyze the previous arguments and plan your verbal strategy.` + (hasActiveTraits ? ` Keep your strategy aligned with your personality traits.` : ``),
-      `Following the closing </thought> tag, write your public response. Do NOT mention these tags in your public text.`
-    ].join('\n');
+    let formattingDirectives = "";
+    if (debateState.thoughtEnabled) {
+      formattingDirectives = [
+        `CRITICAL FORMAT REQUIREMENT: You MUST start your response with an internal reasoning monologue enclosed in <thought>...</thought> tags.`,
+        `In this monologue, analyze the previous arguments and plan your verbal strategy.` + (hasActiveTraits ? ` Keep your strategy aligned with your personality traits.` : ``),
+        `Following the closing </thought> tag, write your public response. Do NOT mention these tags in your public text.`
+      ].join('\n');
+    } else {
+      formattingDirectives = `CRITICAL FORMAT REQUIREMENT: Do NOT write any internal monologue, reasoning, or thoughts. Do NOT use any <thought> or similar tags. Write your public response directly.`;
+    }
     
     const systemPromptParts = [
       baseInstructions,

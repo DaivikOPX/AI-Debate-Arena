@@ -31,6 +31,7 @@ export let debateState = {
   rebuttalEnabled: true,
   rebuttalLimit: 3,
   ollamaHost: "http://localhost:11434",
+  thoughtEnabled: true,
   debateMode: "medium",
   abortController: null
 };
@@ -245,6 +246,34 @@ export function loadRebuttalSettingsFromStorage() {
       debateState.rebuttalLimit = 3;
       if (elements.selectRebuttalLimit) {
         elements.selectRebuttalLimit.value = "3";
+      }
+    }
+  } catch (e) {
+    console.warn("Storage access restricted:", e);
+  }
+}
+
+export function saveThoughtSettingToStorage() {
+  try {
+    const isEnabled = elements.checkThoughtEnabled ? elements.checkThoughtEnabled.checked : true;
+    localStorage.setItem('ai_debate_thought_enabled_v2', isEnabled ? 'true' : 'false');
+  } catch (e) {
+    console.warn("Storage writing restricted:", e);
+  }
+}
+
+export function loadThoughtSettingFromStorage() {
+  try {
+    const saved = localStorage.getItem('ai_debate_thought_enabled_v2');
+    if (saved !== null) {
+      debateState.thoughtEnabled = saved === 'true';
+      if (elements.checkThoughtEnabled) {
+        elements.checkThoughtEnabled.checked = debateState.thoughtEnabled;
+      }
+    } else {
+      debateState.thoughtEnabled = true;
+      if (elements.checkThoughtEnabled) {
+        elements.checkThoughtEnabled.checked = true;
       }
     }
   } catch (e) {

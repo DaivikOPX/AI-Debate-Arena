@@ -9,12 +9,14 @@ import {
   loadTeamDiscussionFromStorage,
   loadRoastModeFromStorage,
   loadRebuttalSettingsFromStorage,
+  loadThoughtSettingFromStorage,
   saveDebateModeToStorage,
   saveRoastModeToStorage,
   saveModeratorToStorage,
   saveJudgeToStorage,
   saveTeamDiscussionToStorage,
-  saveRebuttalSettingsToStorage
+  saveRebuttalSettingsToStorage,
+  saveThoughtSettingToStorage
 } from './state.js?v=8.0';
 
 import {
@@ -54,6 +56,7 @@ function initApp() {
   
   elements.checkModEnabled = document.getElementById('check-mod-enabled');
   elements.checkJudgeEnabled = document.getElementById('check-judge-enabled');
+  elements.checkThoughtEnabled = document.getElementById('check-thought-enabled');
   elements.checkRoastEnabled = document.getElementById('check-roast-enabled');
   elements.checkRebuttalEnabled = document.getElementById('check-rebuttal-enabled');
   elements.selectRebuttalLimit = document.getElementById('select-rebuttal-limit');
@@ -88,6 +91,7 @@ function initApp() {
   loadModeratorFromStorage();
   loadJudgeFromStorage();
   loadDebateModeFromStorage();
+  loadThoughtSettingFromStorage();
   loadRoastModeFromStorage();
   loadTeamDiscussionFromStorage();
   loadRebuttalSettingsFromStorage();
@@ -146,6 +150,14 @@ function setupEventListeners() {
     elements.checkJudgeEnabled.addEventListener('change', (e) => {
       debateState.judge.enabled = e.target.checked;
       saveJudgeToStorage();
+      updateUIForState();
+    });
+  }
+
+  if (elements.checkThoughtEnabled) {
+    elements.checkThoughtEnabled.addEventListener('change', (e) => {
+      debateState.thoughtEnabled = e.target.checked;
+      saveThoughtSettingToStorage();
       updateUIForState();
     });
   }
