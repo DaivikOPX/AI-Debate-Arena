@@ -594,14 +594,15 @@ export function renderSettingsModal() {
         </div>
       </div>
       
-      <div class="modal-debater-card-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-        <div>
+      <div class="modal-debater-card-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+        <!-- Left Column: Identity, Team & Model Configuration -->
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
           <div class="form-group">
             <label>Name</label>
-            <input type="text" class="input-debater-name" data-id="${debater.id}" value="${escapeHtml(debater.name)}">
+            <input type="text" class="input-debater-name" data-id="${debater.id}" value="${escapeHtml(debater.name)}" placeholder="Enter Name...">
           </div>
 
-          <div class="form-group" style="margin-top: 0.5rem;">
+          <div class="form-group">
             <label>Team Allocation</label>
             <select class="select-debater-team" data-id="${debater.id}" style="font-weight: 700; color: ${debater.team === 'pro' ? 'var(--color-pro)' : 'var(--color-con)'}">
               <option value="pro" ${debater.team === 'pro' ? 'selected' : ''}>Affirmative (Team Pro)</option>
@@ -609,40 +610,24 @@ export function renderSettingsModal() {
             </select>
           </div>
 
-          <div class="form-group" style="margin-top: 0.5rem;">
-            <label>Persona Preset</label>
-            <select class="select-debater-persona" data-id="${debater.id}">
-              ${personaOptions}
+          <div class="form-group">
+            <label>API Provider</label>
+            <select class="select-debater-provider" data-id="${debater.id}">
+              ${providerOptions}
             </select>
           </div>
-          
-          <div class="form-group" style="margin-top: 0.5rem;">
-            <div style="display: flex; justify-content: space-between;">
-              <label>Temperature</label>
-              <span class="val-debater-temp" data-id="${debater.id}" style="font-family: var(--font-mono); font-size: 0.8rem;">${debater.temperature}</span>
-            </div>
-            <input type="range" class="slider-debater-temp" data-id="${debater.id}" min="0" max="1.5" step="0.1" value="${debater.temperature}">
+
+          <div class="form-group">
+            <label>Model</label>
+            <select class="select-debater-model" data-id="${debater.id}">
+              ${modelOptions}
+            </select>
           </div>
         </div>
 
-        <div>
-          <div class="modal-debater-fields-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="form-group">
-              <label>API Provider</label>
-              <select class="select-debater-provider" data-id="${debater.id}">
-                ${providerOptions}
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Model</label>
-              <select class="select-debater-model" data-id="${debater.id}">
-                ${modelOptions}
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-top: 0.5rem;">
+        <!-- Right Column: API Key & System Persona Details -->
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div class="form-group">
             <label>API Key</label>
             <div class="api-input-wrap">
               <input type="password" id="key-${debater.id}" class="input-debater-key" data-id="${debater.id}" value="${escapeHtml(debater.apiKey || '')}" placeholder="Enter API Key...">
@@ -650,14 +635,14 @@ export function renderSettingsModal() {
             </div>
           </div>
 
-          <div class="form-group grp-custom-model" id="grp-custom-model-${debater.id}" style="display: ${debater.model === 'custom' ? 'block' : 'none'}; margin-top: 0.5rem;">
+          <div class="form-group grp-custom-model" id="grp-custom-model-${debater.id}" style="display: ${debater.model === 'custom' ? 'block' : 'none'};">
             <label>Custom Model ID</label>
             <input type="text" class="input-debater-custom-model" data-id="${debater.id}" value="${escapeHtml(debater.customModel || '')}" placeholder="e.g., llama3:8b">
           </div>
 
-          <div class="form-group" style="margin-top: 0.5rem;">
-            <label>System Instructions</label>
-            <textarea class="textarea-debater-instructions" data-id="${debater.id}" style="min-height: 80px;">${escapeHtml(debater.instructions || '')}</textarea>
+          <div class="form-group" style="display: flex; flex-direction: column; flex: 1; margin: 0;">
+            <label>System Instructions (Persona)</label>
+            <textarea class="textarea-debater-instructions" data-id="${debater.id}" style="flex: 1; min-height: 100px; resize: vertical;" placeholder="Enter custom instructions to define this debater's persona...">${escapeHtml(debater.instructions || '')}</textarea>
           </div>
         </div>
       </div>
@@ -742,34 +727,10 @@ export function bindModalDebaterEvents() {
     });
   });
 
-  document.querySelectorAll('#modal-settings-body .select-debater-persona').forEach(el => {
-    el.addEventListener('change', (e) => {
-      const id = e.target.getAttribute('data-id');
-      const personaId = e.target.value;
-      updateTempDebaterProperty(id, 'personaPreset', personaId);
-      
-      if (personaId) {
-        const persona = DEBATE_PRESETS.personas.find(p => p.id === personaId);
-        if (persona) {
-          const textarea = document.querySelector(`#modal-debater-card-${id} .textarea-debater-instructions`);
-          if (textarea) {
-            textarea.value = persona.systemInstructions;
-            updateTempDebaterProperty(id, 'instructions', persona.systemInstructions);
-          }
-        }
-      }
-    });
-  });
-
   document.querySelectorAll('#modal-settings-body .textarea-debater-instructions').forEach(el => {
     el.addEventListener('input', (e) => {
       const id = e.target.getAttribute('data-id');
       updateTempDebaterProperty(id, 'instructions', e.target.value);
-      const personaSelect = document.querySelector(`#modal-debater-card-${id} .select-debater-persona`);
-      if (personaSelect) {
-        personaSelect.value = "";
-        updateTempDebaterProperty(id, 'personaPreset', "");
-      }
     });
   });
 
@@ -934,9 +895,7 @@ export function updateUIForState() {
   document.querySelectorAll('.select-debater-provider').forEach(el => el.disabled = disableForm);
   document.querySelectorAll('.select-debater-model').forEach(el => el.disabled = disableForm);
   document.querySelectorAll('.input-debater-custom-model').forEach(el => el.disabled = disableForm);
-  document.querySelectorAll('.select-debater-persona').forEach(el => el.disabled = disableForm);
   document.querySelectorAll('.textarea-debater-instructions').forEach(el => el.disabled = disableForm);
-  document.querySelectorAll('.slider-debater-temp').forEach(el => el.disabled = disableForm);
   document.querySelectorAll('.btn-remove-debater').forEach(el => el.disabled = disableForm);
   
   elements.checkModEnabled.disabled = disableForm;
