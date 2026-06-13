@@ -5,7 +5,7 @@ import {
   elements,
   saveDebatersToStorage,
   saveModeratorToStorage
-} from './state.js';
+} from './state.js?v=5.0';
 
 export let tempModalState = {
   debaters: [],
