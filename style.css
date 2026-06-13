@@ -966,61 +966,110 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .debater-pods.pods-5, .debater-pods.pods-6 { grid-template-columns: 1fr 1fr 1fr; }
 
 /* Pod — Vertical Portrait Card Layout */
+/* Pod — Vertical Portrait Card Layout */
 .pod {
-  background: var(--bg-glass);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, rgba(16, 24, 48, 0.45) 0%, rgba(8, 12, 24, 0.8) 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
-  padding: 1.5rem 1.25rem 1.25rem;
+  padding: 1.75rem 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
   transition: all var(--transition-smooth);
   position: relative;
-  overflow: visible;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(12px);
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px) saturate(160%);
 }
 
-/* Top accent bar */
+/* Cyber corner brackets inside card */
+.pod::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);
+  border-right: 2px solid rgba(255, 255, 255, 0.2);
+  opacity: 0.4;
+  transition: all var(--transition-smooth);
+}
+
 .pod::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: transparent;
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  bottom: 8px;
+  left: 8px;
+  width: 8px;
+  height: 8px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+  opacity: 0.4;
+  transition: all var(--transition-smooth);
 }
 
-.pod.pod-pro::before {
-  background: linear-gradient(to right, var(--color-pro), #0052d4);
+.pod.pod-pro:hover::after { border-color: var(--color-pro); opacity: 1; }
+.pod.pod-con:hover::after { border-color: var(--color-con); opacity: 1; }
+.pod.pod-pro:hover::before { border-color: var(--color-pro); opacity: 1; }
+.pod.pod-con:hover::before { border-color: var(--color-con); opacity: 1; }
+
+/* Inactive Pod Hover States */
+.pod:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.7);
 }
-.pod.pod-con::before {
-  background: linear-gradient(to right, var(--color-con), #8a2387);
+
+.pod.pod-pro:hover {
+  border-color: rgba(0, 242, 254, 0.55);
+  box-shadow: 0 24px 50px rgba(0, 242, 254, 0.15), inset 0 1px 1px rgba(0, 242, 254, 0.2);
+}
+
+.pod.pod-con:hover {
+  border-color: rgba(255, 0, 127, 0.55);
+  box-shadow: 0 24px 50px rgba(255, 0, 127, 0.15), inset 0 1px 1px rgba(255, 0, 127, 0.2);
 }
 
 /* Pod Avatar Ring wrapper */
 .pod-avatar-ring {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   z-index: 1;
-  transition: transform var(--transition-smooth);
+  transition: all var(--transition-smooth);
 }
 
-.pod:hover .pod-avatar-ring {
-  transform: scale(1.05);
-}
-
-/* Pseudo-element for the holographic spinning ring - static by default */
+/* Outer spinning dashed ring - always visible but glows when active */
 .pod-avatar-ring::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, 0.12);
+  transition: all var(--transition-smooth);
+  animation: holoSpin 24s linear infinite;
+}
+
+.pod-pro .pod-avatar-ring::before {
+  border-color: rgba(0, 242, 254, 0.25);
+}
+
+.pod-con .pod-avatar-ring::before {
+  border-color: rgba(255, 0, 127, 0.25);
+}
+
+/* Inner overlay gradient */
+.pod-avatar-ring::after {
   content: '';
   position: absolute;
   top: 0;
@@ -1028,83 +1077,83 @@ input[type="range"]::-webkit-slider-thumb:hover {
   right: 0;
   bottom: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08); /* clean static border when inactive */
-  transition: background var(--transition-smooth), opacity var(--transition-smooth);
-  z-index: 1;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 65%, rgba(255, 255, 255, 0.05) 100%);
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+  z-index: 0;
+  transition: all var(--transition-smooth);
 }
 
-.pod-pro .pod-avatar-ring::before {
-  background: rgba(0, 242, 254, 0.15); /* static cyan ring */
+.pod:hover .pod-avatar-ring {
+  transform: scale(1.04);
 }
 
-.pod-con .pod-avatar-ring::before {
-  background: rgba(255, 0, 127, 0.15); /* static pink ring */
+.pod.pod-pro:hover .pod-avatar-ring::before {
+  border-color: rgba(0, 242, 254, 0.5);
+  animation-duration: 12s;
 }
 
-/* Active pod: spinning holographic conic gradient on the pseudo-element only (leaves child static!) */
+.pod.pod-con:hover .pod-avatar-ring::before {
+  border-color: rgba(255, 0, 127, 0.5);
+  animation-duration: 12s;
+}
+
+/* Active pod: spinning holographic conic gradient on the pseudo-element only */
 .pod.active .pod-avatar-ring::before {
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(0, 242, 254, 0.4) 60deg,
-    transparent 120deg,
-    rgba(255, 0, 127, 0.3) 180deg,
-    transparent 240deg,
-    rgba(255, 183, 3, 0.3) 300deg,
-    transparent 360deg
-  );
-  animation: holoSpin var(--holo-speed) linear infinite;
+  border-style: dashed;
+  border-width: 2px;
+  animation: holoSpin 6s linear infinite;
 }
 
 .pod.active.pod-pro .pod-avatar-ring::before {
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    var(--color-pro) 90deg,
-    transparent 180deg,
-    var(--color-pro) 270deg,
-    transparent 360deg
-  );
+  border-color: var(--color-pro);
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
 }
 
 .pod.active.pod-con .pod-avatar-ring::before {
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    var(--color-con) 90deg,
-    transparent 180deg,
-    var(--color-con) 270deg,
-    transparent 360deg
-  );
+  border-color: var(--color-con);
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
 }
 
 /* Pod Avatar — larger with holographic ring */
 .pod-avatar {
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.85rem;
+  font-size: 2.15rem;
   position: relative;
-  background: var(--bg-secondary);
+  background: #060913;
   flex-shrink: 0;
-  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.4);
   z-index: 2;
-  border: 2px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  transition: all var(--transition-smooth);
 }
 
 .pod-pro .pod-avatar {
   border: 2px solid var(--color-pro);
-  color: var(--color-pro);
-  box-shadow: 0 0 15px var(--color-pro-glow), inset 0 0 12px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 0 15px var(--color-pro-glow);
 }
 
 .pod-con .pod-avatar {
   border: 2px solid var(--color-con);
-  color: var(--color-con);
-  box-shadow: 0 0 15px var(--color-con-glow), inset 0 0 12px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 0 15px var(--color-con-glow);
+}
+
+.pod.active .pod-avatar {
+  transform: scale(1.04);
+}
+
+.pod.active.pod-pro .pod-avatar {
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 0 25px rgba(0, 242, 254, 0.5);
+  border-color: #00f2fe;
+}
+
+.pod.active.pod-con .pod-avatar {
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.8), 0 0 25px rgba(255, 0, 127, 0.5);
+  border-color: #ff007f;
 }
 
 .pod-info {
@@ -1113,58 +1162,76 @@ input[type="range"]::-webkit-slider-thumb:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .pod-name {
   font-weight: 700;
-  font-size: 1.05rem;
-  margin-bottom: 0.3rem;
+  font-size: 1.15rem;
+  margin-bottom: 0.4rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   letter-spacing: -0.01em;
   max-width: 100%;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-/* Team badge/chip */
+/* Team badge/chip - Tactical skewed layout */
 .pod-team-chip {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-family: var(--font-mono);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.4rem;
-  font-weight: 700;
-  padding: 0.15rem 0.6rem;
-  border-radius: 9999px;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.6rem;
+  font-weight: 800;
+  padding: 0.2rem 0.8rem;
   display: inline-block;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: all var(--transition-smooth);
 }
 
 .pod-chip-pro {
-  color: var(--color-pro);
-  background: rgba(0, 242, 254, 0.1);
-  border: 1px solid rgba(0, 242, 254, 0.2);
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.08);
+  border-left: 2px solid #00f2fe;
+  border-right: 2px solid #00f2fe;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+  text-shadow: 0 0 6px rgba(0, 242, 254, 0.4);
 }
 
 .pod-chip-con {
-  color: var(--color-con);
-  background: rgba(255, 0, 127, 0.1);
-  border: 1px solid rgba(255, 0, 127, 0.2);
+  color: #ff007f;
+  background: rgba(255, 0, 127, 0.08);
+  border-left: 2px solid #ff007f;
+  border-right: 2px solid #ff007f;
+  box-shadow: 0 0 10px rgba(255, 0, 127, 0.1);
+  text-shadow: 0 0 6px rgba(255, 0, 127, 0.4);
 }
 
 /* Model pill */
 .pod-model {
   font-size: 0.72rem;
   font-family: var(--font-mono);
-  color: #94a3b8;
+  color: #cbd5e1;
   display: inline-block;
-  background: rgba(0, 0, 0, 0.45);
-  padding: 0.2rem 0.6rem;
-  border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.65);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 100%;
+  max-width: 95%;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+  transition: all var(--transition-smooth);
+}
+
+.pod:hover .pod-model {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
 }
 
 /* Layout compression for 4+ models */
@@ -1173,49 +1240,56 @@ input[type="range"]::-webkit-slider-thumb:hover {
   gap: 0.85rem;
 }
 .debater-pods.pods-4 .pod, .debater-pods.pods-5 .pod, .debater-pods.pods-6 .pod {
-  padding: 1rem 0.85rem;
+  padding: 1.25rem 1rem 1rem;
 }
 .debater-pods.pods-4 .pod-avatar-ring, .debater-pods.pods-5 .pod-avatar-ring, .debater-pods.pods-6 .pod-avatar-ring {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
 }
 .debater-pods.pods-4 .pod-avatar, .debater-pods.pods-5 .pod-avatar, .debater-pods.pods-6 .pod-avatar {
-  width: 52px;
-  height: 52px;
-  font-size: 1.35rem;
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
 }
 .debater-pods.pods-4 .pod-name, .debater-pods.pods-5 .pod-name, .debater-pods.pods-6 .pod-name {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
-/* Pod Active States — Dramatic Glow */
+/* Active Speaker scanning sweep animation */
+@keyframes lightSweep {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Pod Active States — Dramatic Esports Glow */
 .pod.active {
-  background: rgba(30, 41, 59, 0.45);
-  transform: scale(1.03) translateY(-3px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-  z-index: 2;
+  transform: scale(1.04) translateY(-4px);
+  z-index: 5;
 }
 
 .pod.active.pod-pro {
-  border-color: rgba(0, 242, 254, 0.6);
-  background: rgba(0, 242, 254, 0.06);
-  animation: pulse-pro 2s infinite ease-in-out;
-  box-shadow: 0 0 30px rgba(0, 242, 254, 0.3), 0 0 60px rgba(0, 242, 254, 0.1), 0 15px 40px rgba(0, 0, 0, 0.3);
+  border-color: #00f2fe;
+  background: linear-gradient(135deg, rgba(8, 12, 24, 0.95) 0%, rgba(30, 41, 59, 0.6) 50%, rgba(8, 12, 24, 0.95) 100%);
+  background-size: 200% 200%;
+  animation: lightSweep 4s ease infinite;
+  box-shadow: 0 20px 50px rgba(0, 242, 254, 0.35), inset 0 0 15px rgba(0, 242, 254, 0.15);
 }
 
 .pod.active.pod-con {
-  border-color: rgba(255, 0, 127, 0.6);
-  background: rgba(255, 0, 127, 0.06);
-  animation: pulse-con 2s infinite ease-in-out;
-  box-shadow: 0 0 30px rgba(255, 0, 127, 0.3), 0 0 60px rgba(255, 0, 127, 0.1), 0 15px 40px rgba(0, 0, 0, 0.3);
+  border-color: #ff007f;
+  background: linear-gradient(135deg, rgba(8, 12, 24, 0.95) 0%, rgba(30, 41, 59, 0.6) 50%, rgba(8, 12, 24, 0.95) 100%);
+  background-size: 200% 200%;
+  animation: lightSweep 4s ease infinite;
+  box-shadow: 0 20px 50px rgba(255, 0, 127, 0.35), inset 0 0 15px rgba(255, 0, 127, 0.15);
 }
 
 .pod.pod-pro.active {
-  border-color: rgba(0, 242, 254, 0.6);
+  border-color: #00f2fe;
 }
 
 .pod.pod-con.active {
-  border-color: rgba(255, 0, 127, 0.6);
+  border-color: #ff007f;
 }
 
 
