@@ -67,6 +67,7 @@ function initApp() {
   elements.btnReset = document.getElementById('btn-reset');
   elements.btnExportMd = document.getElementById('btn-export-md');
   elements.btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+  elements.btnExpandSidebar = document.getElementById('btn-expand-sidebar');
   
   elements.debaterPods = document.getElementById('debater-pods');
   elements.debateFeed = document.getElementById('debate-feed');
@@ -161,15 +162,19 @@ function setupEventListeners() {
     });
   }
 
+  const toggleSidebar = () => {
+    const container = document.querySelector('.app-container');
+    if (container) {
+      container.classList.toggle('sidebar-collapsed');
+    }
+  };
+
   if (elements.btnToggleSidebar) {
-    elements.btnToggleSidebar.addEventListener('click', () => {
-      const container = document.querySelector('.app-container');
-      if (container) {
-        container.classList.toggle('sidebar-collapsed');
-        const isCollapsed = container.classList.contains('sidebar-collapsed');
-        elements.btnToggleSidebar.classList.toggle('active', isCollapsed);
-      }
-    });
+    elements.btnToggleSidebar.addEventListener('click', toggleSidebar);
+  }
+
+  if (elements.btnExpandSidebar) {
+    elements.btnExpandSidebar.addEventListener('click', toggleSidebar);
   }
 
   if (elements.checkDiscussionEnabled) {

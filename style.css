@@ -448,20 +448,25 @@ header {
 }
 
 
-/* ─── Section 6: App Main Layout ─────────────────────────── */
+/* ─── Section 6: App Main Grid Layout ─────────────────────────── */
 .app-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 380px 1fr;
   flex: 1;
   height: calc(100vh - 76px); /* adjusted for top bar + header */
   overflow: hidden;
   position: relative;
   z-index: 1;
+  transition: grid-template-columns 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.app-container.sidebar-collapsed {
+  grid-template-columns: 0px 1fr;
+}
+
 
 /* ─── Section 7: Sidebar — Settings Dashboard ─────────────────── */
 .sidebar {
-  width: 380px;
-  min-width: 380px;
   background: rgba(8, 12, 24, 0.5);
   border-right: 1px solid var(--border-color);
   padding: 1.5rem;
@@ -472,22 +477,21 @@ header {
   backdrop-filter: blur(12px);
   position: relative;
   z-index: 2;
-  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              min-width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              padding 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+              width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-right-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: left;
 }
 
 .app-container.sidebar-collapsed .sidebar {
-  width: 0 !important;
-  min-width: 0 !important;
-  padding: 0 !important;
-  border-right-width: 0 !important;
   transform: translateX(-100%);
   opacity: 0;
   pointer-events: none;
+  width: 0;
+  padding: 0;
+  border-right-width: 0;
   overflow: hidden;
 }
 
@@ -935,8 +939,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   overflow: hidden;
   position: relative;
   z-index: 1;
-  flex: 1;
-  min-width: 0;
 }
 
 
@@ -2628,11 +2630,48 @@ body.debate-active .sidebar {
   overflow: hidden !important;
 }
 
-/* Custom Floating Sidebar Collapse Button */
-.sidebar-collapse-btn {
+/* Sidebar Header Elements */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar-header-title {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--text-main);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebar-close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  transition: all var(--transition-fast);
+  border-radius: 4px;
+}
+
+.sidebar-close-btn:hover {
+  color: var(--color-pro);
+  background: rgba(0, 242, 254, 0.08);
+}
+
+/* Custom Floating Sidebar Expand Button */
+.sidebar-expand-btn {
+  display: none;
   position: absolute;
   top: 1.5rem;
-  left: 336px; /* Inside the sidebar top-right, aligned with right margin */
+  left: 15px;
   z-index: 99;
   width: 28px;
   height: 28px;
@@ -2640,53 +2679,33 @@ body.debate-active .sidebar {
   background: #090d16;
   border: 1px solid var(--border-color);
   color: var(--color-pro);
-  display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 242, 254, 0.05);
-  transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              background-color 0.3s ease,
-              border-color 0.3s ease,
-              box-shadow 0.3s ease,
-              color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.sidebar-collapse-btn:hover {
+.sidebar-expand-btn:hover {
   background: #0f172a;
   border-color: var(--color-pro);
   color: #fff;
   box-shadow: 0 0 15px rgba(0, 242, 254, 0.4), 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-.sidebar-collapse-btn:active {
+.sidebar-expand-btn:active {
   transform: scale(0.92);
 }
 
-.sidebar-collapse-btn svg {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
 /* Position and icon state when sidebar is collapsed */
-.app-container.sidebar-collapsed .sidebar-collapse-btn {
-  left: 14px; /* Centered near the left screen edge */
-  border-color: var(--color-con);
-  color: var(--color-con);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 0 10px rgba(255, 0, 127, 0.05);
-}
-
-.app-container.sidebar-collapsed .sidebar-collapse-btn:hover {
-  border-color: var(--color-con);
-  box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
-}
-
-.app-container.sidebar-collapsed .sidebar-collapse-btn svg {
-  transform: rotate(180deg);
+.app-container.sidebar-collapsed .sidebar-expand-btn {
+  display: flex;
+  animation: fadeIn 0.3s ease;
 }
 
 /* Hide on mobile stacks */
 @media (max-width: 950px) {
-  .sidebar-collapse-btn {
+  .sidebar-expand-btn {
     display: none !important;
   }
 }
