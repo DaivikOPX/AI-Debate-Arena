@@ -63,7 +63,7 @@ cd AI-Debate-Arena
 ```
 
 ### 2. Run the App Locally
-Because modern browsers enforce strict CORS policies on local modules and direct API calls, the app must be run through a local web server (instead of double-clicking the `index.html` file).
+Because modern browsers require a web server to resolve local ES modules, the app must be run through a local web server (instead of double-clicking the `index.html` file).
 
 **Using Python**:
 ```bash
@@ -111,10 +111,6 @@ In the settings panel, select **Ollama (Local)** as the provider, specify your m
 ---
 
 ## ⚠️ Troubleshooting
-
-### CORS Errors
-*   **Symptom**: Red transmission error stating "CORS policy block" or "Connection failed".
-*   **Solution**: Ensure you are running the project via `localhost` using `python -m http.server` rather than opening `file:///`. If you encounter blocks connecting directly to Anthropic or OpenAI due to browser restrictions, try using **OpenRouter** as it is specifically structured to handle browser-direct requests.
 
 ### Empty Scorecard / Parsing Failures
 *   **Symptom**: Debate completes but the Judge scorecard displays an error.

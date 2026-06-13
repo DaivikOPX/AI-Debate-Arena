@@ -249,8 +249,8 @@ export function appendErrorCard(role, name, error) {
   errDiv.className = 'message message-mod';
   
   let instructions = "Verify your API Key is correctly input in the configurations panel and try again.";
-  if (error.message && error.message.includes('CORS')) {
-    instructions = "Connection failed due to browser CORS policies. If you are using Ollama, make sure you ran: <code>OLLAMA_ORIGINS=\"*\" ollama serve</code>. If using OpenAI/Anthropic direct, try OpenRouter as it is browser-friendly.";
+  if (error.message && (error.message.toLowerCase().includes('fetch') || error.message.toLowerCase().includes('failed'))) {
+    instructions = "Connection failed. If you are using Ollama, make sure Ollama is running locally. Otherwise, verify your internet connection and API keys.";
   }
   
   errDiv.innerHTML = `
@@ -477,9 +477,9 @@ export function renderSettingsModal() {
   
   const providers = [
     { id: 'gemini', name: 'Google Gemini' },
-    { id: 'openrouter', name: 'OpenRouter (Recommended - CORS Friendly)' },
-    { id: 'openai', name: 'OpenAI (Direct - May block CORS)' },
-    { id: 'anthropic', name: 'Anthropic (Direct - May block CORS)' },
+    { id: 'openrouter', name: 'OpenRouter (Recommended)' },
+    { id: 'openai', name: 'OpenAI' },
+    { id: 'anthropic', name: 'Anthropic' },
     { id: 'huggingface', name: 'Hugging Face' },
     { id: 'grok', name: 'Grok (xAI)' },
     { id: 'groq', name: 'Groq' },
