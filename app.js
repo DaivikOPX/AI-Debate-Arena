@@ -4,6 +4,7 @@ import {
   debateState,
   elements,
   loadModeratorFromStorage,
+  loadJudgeFromStorage,
   loadDebateModeFromStorage,
   loadTeamDiscussionFromStorage,
   loadRoastModeFromStorage,
@@ -11,9 +12,10 @@ import {
   saveDebateModeToStorage,
   saveRoastModeToStorage,
   saveModeratorToStorage,
+  saveJudgeToStorage,
   saveTeamDiscussionToStorage,
   saveRebuttalSettingsToStorage
-} from './state.js?v=6.0';
+} from './state.js?v=7.0';
 
 import {
   setupInitialDebaters,
@@ -25,7 +27,7 @@ import {
   renderSettingsModal,
   saveSettings,
   updateUIForState
-} from './ui.js?v=6.0';
+} from './ui.js?v=7.0';
 
 import {
   startDebate,
@@ -33,7 +35,7 @@ import {
   stepTurn,
   resetArena,
   exportDebateAsMarkdown
-} from './simulator.js?v=6.0';
+} from './simulator.js?v=7.0';
 
 // Initialize Application Entrypoint
 if (document.readyState === 'loading') {
@@ -51,6 +53,7 @@ function initApp() {
   elements.btnModalAddDebater = document.getElementById('btn-modal-add-debater');
   
   elements.checkModEnabled = document.getElementById('check-mod-enabled');
+  elements.checkJudgeEnabled = document.getElementById('check-judge-enabled');
   elements.checkRoastEnabled = document.getElementById('check-roast-enabled');
   elements.checkRebuttalEnabled = document.getElementById('check-rebuttal-enabled');
   elements.selectRebuttalLimit = document.getElementById('select-rebuttal-limit');
@@ -83,6 +86,7 @@ function initApp() {
   setupInitialDebaters();
   initializePresets();
   loadModeratorFromStorage();
+  loadJudgeFromStorage();
   loadDebateModeFromStorage();
   loadRoastModeFromStorage();
   loadTeamDiscussionFromStorage();
@@ -138,6 +142,14 @@ function setupEventListeners() {
     updateUIForState();
   });
 
+  if (elements.checkJudgeEnabled) {
+    elements.checkJudgeEnabled.addEventListener('change', (e) => {
+      debateState.judge.enabled = e.target.checked;
+      saveJudgeToStorage();
+      updateUIForState();
+    });
+  }
+
   if (elements.checkRoastEnabled) {
     elements.checkRoastEnabled.addEventListener('change', (e) => {
       debateState.roastEnabled = e.target.checked;
@@ -192,6 +204,7 @@ function setupEventListeners() {
   elements.btnSettingsToggle.addEventListener('click', () => {
     tempModalState.debaters = JSON.parse(JSON.stringify(debateState.debaters));
     tempModalState.moderator = JSON.parse(JSON.stringify(debateState.moderator));
+    tempModalState.judge = JSON.parse(JSON.stringify(debateState.judge));
     renderSettingsModal();
     elements.modalSettings.classList.add('active');
   });

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Debate Arena - Multi-Agent LLM Simulator</title>
   <meta name="description" content="Watch up to 6 AI models debate each other in real-time. Direct browser-to-LLM integration supporting 10 API providers.">
-  <link rel="stylesheet" href="style.css?v=3.0">
+  <link rel="stylesheet" href="style.css?v=7.0">
 </head>
 <body>
   <div id="side-rays-bg"></div>
@@ -94,7 +94,13 @@
           <div class="form-group" style="margin-top: 0.85rem;">
             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
               <input type="checkbox" id="check-mod-enabled" checked style="width: auto;">
-              Enable AI Moderator & Judge
+              Enable AI Moderator (Host)
+            </label>
+          </div>
+          <div class="form-group" style="margin-top: 0.85rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+              <input type="checkbox" id="check-judge-enabled" checked style="width: auto;">
+              Enable AI Judge
             </label>
           </div>
           <div class="form-group" style="margin-top: 0.85rem;">
@@ -249,8 +255,8 @@
   </div>
 
   <script src="purify.js"></script>
-  <script src="presets.js?v=3.0"></script>
-  <script type="module" src="app.js?v=6.0"></script>
+  <script src="presets.js?v=7.0"></script>
+  <script type="module" src="app.js?v=7.0"></script>
   <script type="module">
     import { initSideRays } from './sideRays.js';
     initSideRays(document.getElementById('side-rays-bg'), {

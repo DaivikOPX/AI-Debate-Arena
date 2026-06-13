@@ -3,11 +3,11 @@
 import {
   debateState,
   elements
-} from './state.js?v=6.0';
+} from './state.js?v=7.0';
 
 import {
   renderScorecard
-} from './ui.js?v=6.0';
+} from './ui.js?v=7.0';
 
 // We import compileTranscript at runtime/dynamically to avoid circular dependency
 // or we can import it normally if simulator.js doesn't import api.js directly, 
@@ -228,7 +228,8 @@ Provide a clear and direct answer to this question.`;
     case 'groq':
       return await makeGroqRequest(model, systemPrompt, contextPrompt, temp, apiKey);
     case 'ollama':
-      return await makeOllamaRequest(model, systemPrompt, contextPrompt, temp);
+      const ollamaHost = (step.type === 'debater') ? (debateState.ollamaHost) : (debateState.moderator.ollamaHost || debateState.ollamaHost);
+      return await makeOllamaRequest(model, systemPrompt, contextPrompt, temp, ollamaHost);
     default:
       throw new Error(`Unsupported API provider: ${provider}`);
   }
@@ -236,9 +237,9 @@ Provide a clear and direct answer to this question.`;
 
 // Judge API evaluator V2 (Team Affirmative vs Team Negative)
 export async function callJudgeAPI() {
-  const provider = debateState.moderator.provider;
-  const model = debateState.moderator.model === 'custom' ? debateState.moderator.customModel : debateState.moderator.model;
-  const apiKey = debateState.moderator.apiKey || "";
+  const provider = debateState.judge.provider;
+  const model = debateState.judge.model === 'custom' ? debateState.judge.customModel : debateState.judge.model;
+  const apiKey = debateState.judge.apiKey || "";
   
   const topicTitle = elements.inputTopicTitle.value;
   const transcript = compileTranscriptFn ? compileTranscriptFn(null, false) : "";
@@ -246,7 +247,7 @@ export async function callJudgeAPI() {
   const pros = debateState.debaters.filter(d => d.team === 'pro').map(d => d.name).join(', ');
   const cons = debateState.debaters.filter(d => d.team === 'con').map(d => d.name).join(', ');
   
-  const judgeInstructions = debateState.moderator.instructions ? `\nCustom Evaluation Instructions: ${debateState.moderator.instructions}\n` : "";
+  const judgeInstructions = debateState.judge.instructions ? `\nCustom Evaluation Instructions: ${debateState.judge.instructions}\n` : "";
   const systemPrompt = `You are a professional, neutral, analytical debate judge. Act natural and normal. This is a computer simulation; do not refer to or address an audience, spectators, or a physical hall. Evaluate the team debate. Team Affirmative (Pro) consists of: [${pros}]. Team Negative (Con) consists of: [${cons}]. Deliver a winner and individual team grades (0-100) across 4 pillars.${judgeInstructions}
 CRITICAL: Analyze the entire debate transcript carefully. In your summary evaluation, make sure to explicitly analyze the contributions of each individual debater by name, explaining their key arguments, their logic, and how they affected the outcome. If any direct logical contradictions (where a speaker contradicts themselves or their teammates) occurred, highlight them under a 'Contradiction Alerts' section.`;
   
@@ -289,7 +290,8 @@ CRITICAL: Analyze the entire debate transcript carefully. In your summary evalua
   } else if (provider === 'groq') {
     resultString = await makeGroqRequest(model, systemPrompt, contextPrompt, 0.2, apiKey);
   } else if (provider === 'ollama') {
-    resultString = await makeOllamaRequest(model, systemPrompt, contextPrompt, 0.2);
+    const judgeOllamaHost = debateState.judge.ollamaHost || debateState.ollamaHost;
+    resultString = await makeOllamaRequest(model, systemPrompt, contextPrompt, 0.2, judgeOllamaHost);
   }
   
   try {
@@ -464,8 +466,8 @@ async function makeGroqRequest(model, systemPrompt, userPrompt, temperature, api
   return await makeOpenAICompatibleRequest("https://api.groq.com/openai/v1/chat/completions", model, apiKey, systemPrompt, userPrompt, temperature);
 }
 
-async function makeOllamaRequest(model, systemPrompt, userPrompt, temperature) {
-  const host = debateState.ollamaHost || "http://localhost:11434";
+async function makeOllamaRequest(model, systemPrompt, userPrompt, temperature, customHost = null) {
+  const host = customHost || debateState.ollamaHost || "http://localhost:11434";
   const fetchOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

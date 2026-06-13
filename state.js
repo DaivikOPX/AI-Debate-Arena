@@ -19,6 +19,13 @@ export let debateState = {
     apiKey: "",
     instructions: ""
   },
+  judge: {
+    enabled: true,
+    provider: "gemini",
+    model: "gemini-3.5-flash",
+    apiKey: "",
+    instructions: ""
+  },
   teamDiscussionEnabled: false,
   roastEnabled: false,
   rebuttalEnabled: true,
@@ -85,6 +92,14 @@ export function saveDebatersToStorage() {
 export function saveModeratorToStorage() {
   try {
     localStorage.setItem('ai_debate_moderator_v2', JSON.stringify(debateState.moderator));
+  } catch (e) {
+    console.warn("Storage writing restricted:", e);
+  }
+}
+
+export function saveJudgeToStorage() {
+  try {
+    localStorage.setItem('ai_debate_judge_v2', JSON.stringify(debateState.judge));
   } catch (e) {
     console.warn("Storage writing restricted:", e);
   }
@@ -165,6 +180,32 @@ export function loadModeratorFromStorage() {
   // Sync state to elements if they exist
   if (elements.checkModEnabled) {
     elements.checkModEnabled.checked = debateState.moderator.enabled;
+  }
+}
+
+export function loadJudgeFromStorage() {
+  let savedJudge = null;
+  try {
+    savedJudge = localStorage.getItem('ai_debate_judge_v2');
+  } catch (e) {
+    console.warn("Storage access restricted:", e);
+  }
+  
+  if (savedJudge) {
+    try {
+      debateState.judge = { ...debateState.judge, ...JSON.parse(savedJudge) };
+      if (debateState.judge.provider === "offline" || debateState.judge.provider === "mock") {
+        debateState.judge.provider = "gemini";
+        debateState.judge.model = "gemini-3.5-flash";
+      }
+    } catch (e) {
+      console.error("Error parsing judge settings:", e);
+    }
+  }
+  
+  // Sync state to elements if they exist
+  if (elements.checkJudgeEnabled) {
+    elements.checkJudgeEnabled.checked = debateState.judge.enabled;
   }
 }
 

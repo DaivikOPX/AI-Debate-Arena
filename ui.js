@@ -4,12 +4,14 @@ import {
   debateState,
   elements,
   saveDebatersToStorage,
-  saveModeratorToStorage
-} from './state.js?v=6.0';
+  saveModeratorToStorage,
+  saveJudgeToStorage
+} from './state.js?v=7.0';
 
 export let tempModalState = {
   debaters: [],
-  moderator: {}
+  moderator: {},
+  judge: {}
 };
 
 const DEFAULT_DEBATERS = [
@@ -484,6 +486,7 @@ export function renderSettingsModal() {
     { id: 'ollama', name: 'Ollama (Local)' }
   ];
 
+  // Moderator (Host) Card
   const modCard = document.createElement('div');
   modCard.className = 'modal-debater-card team-mod';
   modCard.style.borderLeft = '3px solid var(--color-mod)';
@@ -505,8 +508,8 @@ export function renderSettingsModal() {
   modCard.innerHTML = `
     <div class="modal-debater-card-header">
       <div class="modal-debater-card-title">
-        <span style="font-size: 1.25rem;">⚖️</span>
-        <span style="font-weight: 700; font-size: 0.95rem; color: var(--color-mod);">AI Moderator & Judge Settings</span>
+        <span style="font-size: 1.25rem;">🎤</span>
+        <span style="font-weight: 700; font-size: 0.95rem; color: var(--color-mod);">AI Moderator (Host) Settings</span>
       </div>
     </div>
     
@@ -549,13 +552,87 @@ export function renderSettingsModal() {
         </div>
 
         <div class="form-group" style="display: flex; flex-direction: column; flex: 1; margin: 0;">
-          <label>System Instructions (Persona)</label>
-          <textarea id="textarea-mod-instructions-modal" style="flex: 1; min-height: 80px; resize: vertical;" placeholder="Enter custom instructions to define the moderator/judge persona...">${escapeHtml(tempModalState.moderator.instructions || '')}</textarea>
+          <label>Custom Instructions (Moderator)</label>
+          <textarea id="textarea-mod-instructions-modal" style="flex: 1; min-height: 80px; resize: vertical;" placeholder="Enter custom instructions to define the moderator persona...">${escapeHtml(tempModalState.moderator.instructions || '')}</textarea>
         </div>
       </div>
     </div>
   `;
   elements.modalSettingsBody.appendChild(modCard);
+
+  // Judge Card
+  const judgeCard = document.createElement('div');
+  judgeCard.className = 'modal-debater-card team-mod';
+  judgeCard.style.borderLeft = '3px solid var(--color-mod)';
+  
+  let judgeProviderOptions = "";
+  providers.forEach(p => {
+    judgeProviderOptions += `<option value="${p.id}" ${tempModalState.judge.provider === p.id ? 'selected' : ''}>${p.name}</option>`;
+  });
+
+  const judgeModels = [...(DEBATE_PRESETS.models[tempModalState.judge.provider] || [])];
+  if (judgeModels.length > 0 && !judgeModels.some(m => m.id === 'custom')) {
+    judgeModels.push({ id: "custom", name: "[Custom Model Identifier...]" });
+  }
+  let judgeModelOptions = "";
+  judgeModels.forEach(m => {
+    judgeModelOptions += `<option value="${m.id}" ${tempModalState.judge.model === m.id ? 'selected' : ''}>${m.name}</option>`;
+  });
+
+  judgeCard.innerHTML = `
+    <div class="modal-debater-card-header">
+      <div class="modal-debater-card-title">
+        <span style="font-size: 1.25rem;">⚖️</span>
+        <span style="font-weight: 700; font-size: 0.95rem; color: var(--color-mod);">AI Judge Settings</span>
+      </div>
+    </div>
+    
+    <div class="modal-debater-card-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <!-- Left Column: Core Identity & Model Configuration -->
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div class="form-group">
+          <label>API Provider</label>
+          <select id="select-judge-provider-modal">
+            ${judgeProviderOptions}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Model</label>
+          <select id="select-judge-model-modal">
+            ${judgeModelOptions}
+          </select>
+        </div>
+      </div>
+
+      <!-- Right Column: API Credentials & Custom Instructions -->
+      <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div class="form-group">
+          <label>API Key</label>
+          <div class="api-input-wrap">
+            <input type="password" id="select-judge-key-modal" value="${escapeHtml(tempModalState.judge.apiKey || '')}" placeholder="Enter API Key...">
+            <button type="button" class="toggle-visibility-btn" data-target="select-judge-key-modal" aria-label="Toggle password visibility">👁️</button>
+          </div>
+        </div>
+
+        <div class="form-group grp-custom-model" id="grp-judge-custom-model-modal" style="display: ${tempModalState.judge.model === 'custom' ? 'block' : 'none'};">
+          <label>Custom Model ID</label>
+          <input type="text" id="input-judge-custom-model-modal" value="${escapeHtml(tempModalState.judge.customModel || '')}" placeholder="e.g., llama3:70b">
+        </div>
+
+        <div class="form-group" id="grp-judge-ollama-host-modal" style="display: ${tempModalState.judge.provider === 'ollama' ? 'block' : 'none'};">
+          <label>Ollama Host URL</label>
+          <input type="text" id="input-judge-ollama-host-modal" value="${escapeHtml(tempModalState.judge.ollamaHost || debateState.ollamaHost || '')}" placeholder="e.g., http://localhost:11434">
+        </div>
+
+        <div class="form-group" style="display: flex; flex-direction: column; flex: 1; margin: 0;">
+          <label>Custom Instructions (Judge / Verdict Criteria)</label>
+          <textarea id="textarea-judge-instructions-modal" style="flex: 1; min-height: 80px; resize: vertical;" placeholder="Enter custom instructions to define the judge evaluation criteria...">${escapeHtml(tempModalState.judge.instructions || '')}</textarea>
+        </div>
+      </div>
+    </div>
+  `;
+  elements.modalSettingsBody.appendChild(judgeCard);
 
   tempModalState.debaters.forEach((debater, index) => {
     const card = document.createElement('div');
@@ -697,6 +774,46 @@ export function bindModalDebaterEvents() {
       const val = e.target.value;
       tempModalState.moderator.model = val;
       const customRow = document.getElementById('grp-mod-custom-model-modal');
+      if (customRow) customRow.style.display = val === 'custom' ? 'block' : 'none';
+    });
+  }
+
+  const judgeProv = document.getElementById('select-judge-provider-modal');
+  if (judgeProv) {
+    judgeProv.addEventListener('change', (e) => {
+      const val = e.target.value;
+      tempModalState.judge.provider = val;
+      
+      const judgeModelSelect = document.getElementById('select-judge-model-modal');
+      if (judgeModelSelect) {
+        judgeModelSelect.innerHTML = "";
+        const models = [...(DEBATE_PRESETS.models[val] || [])];
+        if (models.length > 0 && !models.some(m => m.id === 'custom')) {
+          models.push({ id: "custom", name: "[Custom Model Identifier...]" });
+        }
+        models.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.id;
+          opt.textContent = m.name;
+          judgeModelSelect.appendChild(opt);
+        });
+        tempModalState.judge.model = judgeModelSelect.value;
+      }
+      
+      const customRow = document.getElementById('grp-judge-custom-model-modal');
+      if (customRow) customRow.style.display = tempModalState.judge.model === 'custom' ? 'block' : 'none';
+      
+      const ollamaRow = document.getElementById('grp-judge-ollama-host-modal');
+      if (ollamaRow) ollamaRow.style.display = val === 'ollama' ? 'block' : 'none';
+    });
+  }
+
+  const judgeMod = document.getElementById('select-judge-model-modal');
+  if (judgeMod) {
+    judgeMod.addEventListener('change', (e) => {
+      const val = e.target.value;
+      tempModalState.judge.model = val;
+      const customRow = document.getElementById('grp-judge-custom-model-modal');
       if (customRow) customRow.style.display = val === 'custom' ? 'block' : 'none';
     });
   }
@@ -906,6 +1023,9 @@ export function updateUIForState() {
   document.querySelectorAll('.btn-remove-debater').forEach(el => el.disabled = disableForm);
   
   elements.checkModEnabled.disabled = disableForm;
+  if (elements.checkJudgeEnabled) {
+    elements.checkJudgeEnabled.disabled = disableForm;
+  }
   if (elements.checkRoastEnabled) {
     elements.checkRoastEnabled.disabled = disableForm;
   }
@@ -948,7 +1068,8 @@ export function updateUIForState() {
   const hasKeys = debateState.debaters.every(d => {
     if (d.provider === 'ollama') return true;
     return d.apiKey && d.apiKey.length > 0;
-  }) && (!debateState.moderator.enabled || debateState.moderator.provider === 'ollama' || (debateState.moderator.apiKey && debateState.moderator.apiKey.length > 0));
+  }) && (!debateState.moderator.enabled || debateState.moderator.provider === 'ollama' || (debateState.moderator.apiKey && debateState.moderator.apiKey.length > 0))
+     && (!debateState.judge.enabled || debateState.judge.provider === 'ollama' || (debateState.judge.apiKey && debateState.judge.apiKey.length > 0));
   
   const stepConfigure = document.getElementById('step-configure');
   if (stepConfigure) {
@@ -988,6 +1109,7 @@ export function updateUIForState() {
   if (displayRulesSummary) {
     const rounds = elements.inputRounds.value;
     const modEnabled = elements.checkModEnabled.checked;
+    const judgeEnabled = elements.checkJudgeEnabled ? elements.checkJudgeEnabled.checked : false;
     const debateModeText = elements.selectDebateMode ? elements.selectDebateMode.options[elements.selectDebateMode.selectedIndex]?.text : "Standard";
     const discEnabled = elements.checkDiscussionEnabled && elements.checkDiscussionEnabled.checked;
     const roastEnabled = elements.checkRoastEnabled && elements.checkRoastEnabled.checked;
@@ -998,7 +1120,8 @@ export function updateUIForState() {
     let summaryHtml = `<div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; color: var(--text-muted);">`;
     summaryHtml += `<div>Debate Mode: <strong style="color: var(--text-main);">${debateModeText}</strong></div>`;
     summaryHtml += `<div>Rounds Per Debater: <strong style="color: var(--text-main); font-family: var(--font-mono);">${rounds}</strong></div>`;
-    summaryHtml += `<div>AI Moderator & Judge: <strong style="color: var(--text-main);">${modEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
+    summaryHtml += `<div>AI Moderator (Host): <strong style="color: var(--text-main);">${modEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
+    summaryHtml += `<div>AI Judge: <strong style="color: var(--text-main);">${judgeEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Roasting Mode: <strong style="color: var(--text-main);">${roastEnabled ? '🔥 Enabled' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Rebuttal Phase: <strong style="color: var(--text-main);">${rebuttalEnabled ? 'Enabled (Max ' + rebuttalLimitText + ' Qs)' : 'Disabled'}</strong></div>`;
     summaryHtml += `<div>Team Discussion: <strong style="color: var(--text-main);">${discEnabled ? 'Enabled' : 'Disabled'}</strong></div>`;
@@ -1023,6 +1146,21 @@ export function saveSettings() {
   const modInstructionsInput = document.getElementById('textarea-mod-instructions-modal');
   if (modInstructionsInput) tempModalState.moderator.instructions = modInstructionsInput.value.trim();
 
+  const selectJudgeProvider = document.getElementById('select-judge-provider-modal');
+  const selectJudgeModel = document.getElementById('select-judge-model-modal');
+  const inputJudgeCustomModel = document.getElementById('input-judge-custom-model-modal');
+  const judgeKeyInput = document.getElementById('select-judge-key-modal');
+  const judgeOllamaHostInput = document.getElementById('input-judge-ollama-host-modal');
+  
+  if (selectJudgeProvider) tempModalState.judge.provider = selectJudgeProvider.value;
+  if (selectJudgeModel) tempModalState.judge.model = selectJudgeModel.value;
+  if (inputJudgeCustomModel) tempModalState.judge.customModel = inputJudgeCustomModel.value.trim();
+  if (judgeKeyInput) tempModalState.judge.apiKey = judgeKeyInput.value.trim();
+  if (judgeOllamaHostInput) tempModalState.judge.ollamaHost = judgeOllamaHostInput.value.trim();
+  
+  const judgeInstructionsInput = document.getElementById('textarea-judge-instructions-modal');
+  if (judgeInstructionsInput) tempModalState.judge.instructions = judgeInstructionsInput.value.trim();
+
   // Team balance validation
   const proCount = tempModalState.debaters.filter(d => d.team === 'pro').length;
   const conCount = tempModalState.debaters.filter(d => d.team === 'con').length;
@@ -1034,6 +1172,7 @@ export function saveSettings() {
   // Commit temp settings to official state
   debateState.debaters = JSON.parse(JSON.stringify(tempModalState.debaters));
   debateState.moderator = JSON.parse(JSON.stringify(tempModalState.moderator));
+  debateState.judge = JSON.parse(JSON.stringify(tempModalState.judge));
   
   if (debateState.moderator.ollamaHost) {
     debateState.ollamaHost = debateState.moderator.ollamaHost;
@@ -1041,6 +1180,7 @@ export function saveSettings() {
   
   saveDebatersToStorage();
   saveModeratorToStorage();
+  saveJudgeToStorage();
   
   renderArenaStage();
   updateUIForState();
