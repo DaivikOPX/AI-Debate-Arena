@@ -287,21 +287,26 @@ body {
   position: relative;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - High Visibility Premium Glow Style */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(11, 15, 25, 0.5);
+  border-radius: var(--radius-sm);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.18);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: var(--radius-md);
   transition: background 0.2s;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.35);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 
@@ -453,7 +458,7 @@ header {
   display: grid;
   grid-template-columns: 380px 1fr;
   flex: 1;
-  height: calc(100vh - 76px); /* adjusted for top bar + header */
+  min-height: 0; /* CRITICAL for flex item scrolling! */
   overflow: hidden;
   position: relative;
   z-index: 1;
@@ -477,6 +482,8 @@ header {
   backdrop-filter: blur(12px);
   position: relative;
   z-index: 2;
+  min-height: 0; /* CRITICAL for internal scrolling */
+  height: 100%; /* Fill the grid height */
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -934,8 +941,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
 /* ─── Section 14: Arena View (Right Panel) ─────────────────────── */
 .arena-view {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr);
   height: 100%;
+  min-height: 0; /* CRITICAL for nested scrolling */
   overflow: hidden;
   position: relative;
   z-index: 1;
@@ -1307,7 +1315,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   flex-direction: column;
   gap: 1.5rem;
   scroll-behavior: smooth;
-  height: 100%;
+  min-height: 0; /* CRITICAL to scroll inside grid cells */
   position: relative;
   z-index: 1;
 }
@@ -2626,9 +2634,7 @@ body.debate-active .sidebar .card {
   }
 }
 
-body.debate-active .sidebar {
-  overflow: hidden !important;
-}
+
 
 /* Sidebar Header Elements */
 .sidebar-header {
