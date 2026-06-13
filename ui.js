@@ -106,8 +106,9 @@ export function parseMarkdown(text) {
 }
 
 export function scrollToBottom() {
-  if (elements.debateFeed) {
-    elements.debateFeed.scrollTop = elements.debateFeed.scrollHeight;
+  const arenaView = document.querySelector('.arena-view');
+  if (arenaView) {
+    arenaView.scrollTop = arenaView.scrollHeight;
   }
 }
 

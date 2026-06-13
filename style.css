@@ -756,8 +756,7 @@ textarea {
 
 /* ─── Section 10: Control Panel (Sticky Bottom) ───────────────── */
 .control-panel {
-  position: sticky;
-  bottom: -1.5rem;
+  position: relative;
   margin-top: auto;
   background: rgba(6, 10, 20, 0.92);
   backdrop-filter: blur(24px) saturate(1.3);
@@ -940,11 +939,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* ─── Section 14: Arena View (Right Panel) ─────────────────────── */
 .arena-view {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   height: 100%;
   min-height: 0; /* CRITICAL for nested scrolling */
-  overflow: hidden;
+  overflow-y: auto; /* Enable vertical scroll bar on the arena view */
   position: relative;
   z-index: 1;
 }
@@ -1309,13 +1308,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* ─── Section 17: Debate Feed (Chat Scroll) ────────────────────── */
 .debate-feed {
-  overflow-y: auto;
+  overflow-y: visible;
   padding: 1.5rem 2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   scroll-behavior: smooth;
-  min-height: 0; /* CRITICAL to scroll inside grid cells */
   position: relative;
   z-index: 1;
 }
