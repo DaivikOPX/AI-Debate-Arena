@@ -190,7 +190,15 @@ function setupEventListeners() {
   }
 
   if (elements.checkDiscussionEnabled) {
-    elements.checkDiscussionEnabled.addEventListener('change', () => {
+    elements.checkDiscussionEnabled.addEventListener('change', (e) => {
+      const hasTeams = debateState.debaters.length > 2;
+      if (e.target.checked && !hasTeams) {
+        alert("Team Discussion Mode requires at least 3 debaters configured in Settings (so at least one team has multiple members to coordinate strategy).");
+        e.target.checked = false;
+        debateState.teamDiscussionEnabled = false;
+        return;
+      }
+      debateState.teamDiscussionEnabled = e.target.checked;
       saveTeamDiscussionToStorage();
     });
   }

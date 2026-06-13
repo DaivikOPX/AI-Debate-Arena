@@ -142,7 +142,7 @@ export function appendTypingIndicator(role, name, avatar, step) {
     }
   }
   typeDiv.innerHTML = `
-    <div class="message-avatar">${escapeHtml(avatar)}</div>
+    <div class="message-avatar">${role === 'mod' || role === 'judge' ? escapeHtml(avatar) : escapeHtml(getAvatarContent(name))}</div>
     <div class="message-bubble-wrapper">
       <div class="message-meta">
         <span class="message-speaker">${escapeHtml(name)}</span>
@@ -209,7 +209,7 @@ export function appendMessageWithAnimation(role, name, text, avatar, step) {
     }
 
     msgDiv.innerHTML = `
-      ${!isMod ? `<div class="message-avatar">${escapeHtml(avatar)}</div>` : ''}
+      ${(!isMod && role !== 'judge') ? `<div class="message-avatar">${escapeHtml(getAvatarContent(name))}</div>` : (role === 'judge' ? `<div class="message-avatar">${escapeHtml(avatar)}</div>` : '')}
       <div class="message-bubble-wrapper" style="${isMod ? 'width: 100%;' : ''}">
         <div class="message-meta">
           <span class="message-speaker">${escapeHtml(name)}</span>
@@ -419,6 +419,21 @@ export function setupInitialDebaters() {
   renderArenaStage();
 }
 
+export function getAvatarContent(name) {
+  if (!name) return "AI";
+  const clean = name.replace(/[^a-zA-Z0-9\s]/g, '').trim();
+  const words = clean.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "AI";
+  if (words.length === 1) {
+    const w = words[0];
+    if (w.length >= 2) return w.substring(0, 2).toUpperCase();
+    return w.toUpperCase();
+  }
+  const first = words[0][0] || "";
+  const second = words[1][0] || "";
+  return (first + second).toUpperCase();
+}
+
 export function renderArenaStage() {
   if (!elements.debaterPods) return;
   elements.debaterPods.innerHTML = "";
@@ -443,7 +458,7 @@ export function renderArenaStage() {
         <span class="live-label">LIVE</span>
       </div>
       <div class="pod-avatar-ring">
-        <div class="pod-avatar">${escapeHtml(d.avatar)}</div>
+        <div class="pod-avatar">${escapeHtml(getAvatarContent(d.name))}</div>
       </div>
       <div class="pod-info">
         <div class="pod-name">${escapeHtml(d.name)}</div>
@@ -660,8 +675,10 @@ export function renderSettingsModal() {
 
     card.innerHTML = `
       <div class="modal-debater-card-header">
-        <div class="modal-debater-card-title">
-          <span style="font-size: 1.25rem;">${debater.avatar}</span>
+        <div class="modal-debater-card-title" style="display: flex; align-items: center;">
+          <div class="pod-avatar" style="width: 32px; height: 32px; font-size: 0.75rem; margin-right: 0.5rem; display: inline-flex; border: 1.5px solid; box-shadow: none;">
+            ${escapeHtml(getAvatarContent(debater.name))}
+          </div>
           <span class="modal-debater-card-label" data-id="${debater.id}" style="font-weight: 700; font-size: 0.95rem;">
             ${escapeHtml(debater.name) || `Debater #${index + 1}`}
           </span>
@@ -827,6 +844,8 @@ export function bindModalDebaterEvents() {
       if (card) {
         const label = card.querySelector('.modal-debater-card-label');
         if (label) label.textContent = name || "Unnamed";
+        const miniAvatar = card.querySelector('.modal-debater-card-title .pod-avatar');
+        if (miniAvatar) miniAvatar.textContent = getAvatarContent(name);
       }
     });
   });
@@ -1040,7 +1059,7 @@ export function updateUIForState() {
     elements.grpTeamDiscussion.style.display = 'block';
   }
   if (elements.checkDiscussionEnabled) {
-    elements.checkDiscussionEnabled.disabled = disableForm || !hasTeams;
+    elements.checkDiscussionEnabled.disabled = disableForm;
     if (!hasTeams) {
       elements.checkDiscussionEnabled.parentElement.title = "Requires at least 3 debaters (more than 1 per team)";
       elements.checkDiscussionEnabled.checked = false;
