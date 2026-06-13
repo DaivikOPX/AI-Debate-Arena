@@ -87,7 +87,7 @@ export async function callSpeakerAPI(debater, step) {
     } else if (debateState.debateMode === "advanced") {
       modeDirectives = `Debate Mode: Advanced Academic. Deliver a highly rigorous, sophisticated, and comprehensive argument. You are limited to a maximum of 600 words. Use formal logic, analyze systemic implications, and provide a deep, philosophical or empirical defense.`;
     } else if (debateState.debateMode === "twitter") {
-      modeDirectives = `Debate Mode: Twitter / X Fight. Keep your response extremely short, sharp, punchy, and aggressive. You are limited to a maximum of 50 words. Speak like you are debating in a fast-paced, hype-filled social media feed using tech buzzwords and sharp sarcasm.`;
+      modeDirectives = `Debate Mode: Twitter / X Fight. Keep your response extremely short, sharp, punchy, and aggressive. You are limited to a maximum of 50 words. Speak like you are debating in a fast-paced, hype-filled social media feed using tech buzzwords and sharp sarcasm. Do NOT use any hashtags (do not include the '#' character or hashtag words like #AI, #Tech, etc.).`;
     } else if (debateState.debateMode === "podcast") {
       modeDirectives = `Debate Mode: Podcast Talkshow. Keep your response conversational, natural, and verbose. You are limited to a maximum of 300 words. Reference other debaters by name. Use a conversational, engaging, but argumentative podcast tone.`;
     } else if (debateState.debateMode === "socratic") {
