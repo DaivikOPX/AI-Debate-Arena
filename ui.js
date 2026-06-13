@@ -1035,12 +1035,19 @@ export function updateUIForState() {
   elements.inputRounds.disabled = disableForm;
   elements.btnSettingsToggle.disabled = disableForm;
   
-  if (elements.checkDiscussionEnabled) {
-    elements.checkDiscussionEnabled.disabled = disableForm;
-  }
-  const showTeamDiscussion = debateState.debaters.length > 2;
+  const hasTeams = debateState.debaters.length > 2;
   if (elements.grpTeamDiscussion) {
-    elements.grpTeamDiscussion.style.display = showTeamDiscussion ? 'block' : 'none';
+    elements.grpTeamDiscussion.style.display = 'block';
+  }
+  if (elements.checkDiscussionEnabled) {
+    elements.checkDiscussionEnabled.disabled = disableForm || !hasTeams;
+    if (!hasTeams) {
+      elements.checkDiscussionEnabled.parentElement.title = "Requires at least 3 debaters (more than 1 per team)";
+      elements.checkDiscussionEnabled.checked = false;
+      debateState.teamDiscussionEnabled = false;
+    } else {
+      elements.checkDiscussionEnabled.parentElement.removeAttribute('title');
+    }
   }
 
   if (elements.checkRebuttalEnabled) {
