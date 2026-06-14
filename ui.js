@@ -1044,7 +1044,9 @@ export function updateUIForState() {
   elements.btnExportMd.disabled = debateState.history.length === 0;
   
   const disableForm = debateState.active;
-  elements.selectPreset.disabled = disableForm;
+  if (elements.selectPreset) {
+    elements.selectPreset.disabled = disableForm;
+  }
   elements.inputTopicTitle.disabled = disableForm;
   elements.inputTopicDesc.disabled = disableForm;
   if (elements.btnModalAddDebater) {

@@ -100,7 +100,9 @@ function initApp() {
 }
 
 function setupEventListeners() {
-  elements.selectPreset.addEventListener('change', (e) => loadTopicPreset(e.target.value));
+  if (elements.selectPreset) {
+    elements.selectPreset.addEventListener('change', (e) => loadTopicPreset(e.target.value));
+  }
   elements.inputTopicTitle.addEventListener('input', updateUIForState);
   elements.inputTopicDesc.addEventListener('input', updateUIForState);
   
