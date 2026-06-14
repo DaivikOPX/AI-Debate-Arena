@@ -505,7 +505,7 @@ export function renderSettingsModal() {
   
   const providers = [
     { id: 'gemini', name: 'Google Gemini' },
-    { id: 'openrouter', name: 'OpenRouter (Recommended)' },
+    { id: 'openrouter', name: 'OpenRouter' },
     { id: 'openai', name: 'OpenAI' },
     { id: 'anthropic', name: 'Anthropic' },
     { id: 'huggingface', name: 'Hugging Face' },
