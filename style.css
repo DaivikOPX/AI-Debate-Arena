@@ -2790,6 +2790,14 @@ body.debate-active .sidebar .card {
   animation: fadeIn 0.3s ease;
 }
 
+/* Shift content to prevent overlapping with the floating expand button when sidebar is collapsed */
+.app-container.sidebar-collapsed .debater-pods {
+  padding-left: 3.5rem;
+}
+.app-container.sidebar-collapsed .debate-feed {
+  padding-left: 3.5rem;
+}
+
 /* Hide on mobile stacks */
 @media (max-width: 950px) {
   .sidebar-expand-btn {
