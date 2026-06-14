@@ -326,18 +326,8 @@ header {
   isolation: isolate;
 }
 
-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, var(--color-pro), var(--color-con), var(--color-mod), var(--color-pro));
-  background-size: 300% 100%;
-  animation: headerBorderShift 6s linear infinite;
-  z-index: 10;
-}
+
+
 
 .logo-container {
   display: flex;
