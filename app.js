@@ -17,7 +17,7 @@ import {
   saveTeamDiscussionToStorage,
   saveRebuttalSettingsToStorage,
   saveThoughtSettingToStorage
-} from './state.js?v=9.0';
+} from './state.js?v=9.1';
 
 import {
   setupInitialDebaters,
@@ -29,7 +29,7 @@ import {
   renderSettingsModal,
   saveSettings,
   updateUIForState
-} from './ui.js?v=9.0';
+} from './ui.js?v=9.1';
 
 import {
   startDebate,
@@ -37,7 +37,7 @@ import {
   stepTurn,
   resetArena,
   exportDebateAsMarkdown
-} from './simulator.js?v=9.0';
+} from './simulator.js?v=9.1';
 
 // Initialize Application Entrypoint
 if (document.readyState === 'loading') {

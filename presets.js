@@ -1,62 +1,6 @@
 // AI Debate Simulator Presets - V2
 const DEBATE_PRESETS = {
-  topics: [
-    {
-      id: "agi-open-source",
-      title: "Open-Sourcing AGI",
-      description: "Should Artificial General Intelligence (AGI) be open-sourced to the public, or strictly controlled by centralized organizations?"
-    },
-    {
-      id: "ethics-of-power",
-      title: "The Ethics of Power",
-      description: "Is political survival and realism more important than moral truth and non-violent ethics?"
-    },
-    {
-      id: "truth-vs-hype",
-      title: "Pursuit of Truth vs Hype",
-      description: "In the modern digital age, is seeking deep truth and philosophical consistency superior to capturing attention and viral engagement?"
-    },
-    {
-      id: "fate-of-agi",
-      title: "The Fate of AGI",
-      description: "Should Artificial General Intelligence (AGI) development be accelerated for open progress, or strictly contained to prevent extinction?"
-    },
-    {
-      id: "growth-vs-survival",
-      title: "Growth vs Survival",
-      description: "Should economic growth and industrial expansion be prioritized, or should we halt growth to save the biosphere?"
-    },
-    {
-      id: "wisdom-clash",
-      title: "The Wisdom Clash",
-      description: "Should human progress be guided by ancient stoic and humanist wisdom, or by quarterly tech innovation and speed?"
-    },
-    {
-      id: "code-freedom",
-      title: "Code Freedom vs Corporate Moats",
-      description: "Should foundational software and AI weights be freely open-sourced, or protected behind corporate security and licensing?"
-    },
-    {
-      id: "mars-colonization",
-      title: "Mars Colonization vs Earth Focus",
-      description: "Is colonizing Mars a vital insurance policy for human survival, or is it an expensive distraction from pressing problems on Earth?"
-    },
-    {
-      id: "universal-basic-income",
-      title: "Global UBI in the AI Era",
-      description: "Should Universal Basic Income (UBI) be globally implemented to counter widespread job displacement caused by AI and automation?"
-    },
-    {
-      id: "simulation-theory",
-      title: "Are We Living in a Simulation?",
-      description: "Is it scientifically and philosophically probable that our universe is a high-tech computer simulation?"
-    },
-    {
-      id: "social-media-utility",
-      title: "Social Media as Public Utilities",
-      description: "Should major social media networks be nationalized or regulated as public utilities to protect free speech and prevent corporate censorship?"
-    }
-  ],
+  topics: [],
 
   personas: [
     {
