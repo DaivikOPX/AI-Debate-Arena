@@ -3,7 +3,7 @@
 import {
   debateState,
   elements
-} from './state.js?v=8.0';
+} from './state.js?v=9.0';
 
 import {
   highlightSpeakerPod,
@@ -12,13 +12,13 @@ import {
   appendErrorCard,
   updateUIForState,
   renderArenaStage
-} from './ui.js?v=8.0';
+} from './ui.js?v=9.0';
 
 import {
   callSpeakerAPI,
   callJudgeAPI,
   setCompileTranscriptFn
-} from './api.js?v=8.0';
+} from './api.js?v=9.0';
 
 // Setup compileTranscript in api.js at initialization
 setCompileTranscriptFn(compileTranscript);
@@ -41,7 +41,7 @@ export function compileTranscript(activeDebater = null, isExport = false) {
 }
 
 export function buildTurnSequence() {
-  const rounds = parseInt(elements.inputRounds.value);
+  const rounds = parseInt(elements.inputRounds.value, 10);
   const modEnabled = elements.checkModEnabled.checked;
   const discussionEnabled = elements.checkDiscussionEnabled ? elements.checkDiscussionEnabled.checked : false;
   const seq = [];
@@ -103,7 +103,7 @@ export function startDebate() {
   debateState.paused = false;
   debateState.currentRound = 1;
   debateState.currentStepIndex = 0;
-  debateState.totalRounds = parseInt(elements.inputRounds.value);
+  debateState.totalRounds = parseInt(elements.inputRounds.value, 10);
   debateState.teamDiscussionEnabled = elements.checkDiscussionEnabled ? elements.checkDiscussionEnabled.checked : false;
   debateState.turnSequence = buildTurnSequence();
   debateState.history = [];
@@ -233,7 +233,8 @@ export async function stepTurn() {
       name: speakerName,
       text: historyText,
       avatar: avatar,
-      team: team
+      team: team,
+      isDiscussion: false
     });
     
     await appendMessageWithAnimation(role, speakerName, responseText, avatar, step);
@@ -619,10 +620,13 @@ export function exportDebateAsMarkdown() {
   const a = document.createElement('a');
   a.href = url;
   a.download = `debate-v2-${topicTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.md`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  try {
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
 }
 
 export function finalizeDebateState() {

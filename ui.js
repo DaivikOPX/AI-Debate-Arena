@@ -3,10 +3,11 @@
 import {
   debateState,
   elements,
+  deobfuscateKey,
   saveDebatersToStorage,
   saveModeratorToStorage,
   saveJudgeToStorage
-} from './state.js?v=8.0';
+} from './state.js?v=9.0';
 
 export let tempModalState = {
   debaters: [],
@@ -104,7 +105,9 @@ export function parseMarkdown(text) {
   if (typeof DOMPurify !== 'undefined') {
     return DOMPurify.sanitize(rawHtml);
   }
-  return rawHtml;
+  // Fail closed: if DOMPurify is unavailable, return escaped text (no HTML rendering)
+  console.warn("DOMPurify not loaded — falling back to escaped text.");
+  return escapeHtml(text);
 }
 
 export function scrollToBottom() {
@@ -404,6 +407,16 @@ export function setupInitialDebaters() {
             d.provider = "gemini";
             d.model = "gemini-1.5-flash";
           }
+          // Deobfuscate API key from localStorage
+          if (d.apiKey) d.apiKey = deobfuscateKey(d.apiKey);
+          // Validate personality trait defaults
+          if (typeof d.aggression !== 'number' || d.aggression < 1 || d.aggression > 10) d.aggression = 5;
+          if (typeof d.logic !== 'number' || d.logic < 1 || d.logic > 10) d.logic = 5;
+          if (typeof d.emotion !== 'number' || d.emotion < 1 || d.emotion > 10) d.emotion = 5;
+          if (typeof d.humor !== 'number' || d.humor < 1 || d.humor > 10) d.humor = 5;
+          if (typeof d.stubbornness !== 'number' || d.stubbornness < 1 || d.stubbornness > 10) d.stubbornness = 5;
+          // Validate temperature
+          if (typeof d.temperature !== 'number' || d.temperature < 0 || d.temperature > 2) d.temperature = 0.7;
         });
       } else {
         throw new Error("Invalid debaters array length or shape");
@@ -957,7 +970,12 @@ export function addDebater() {
     personaPreset: "",
     instructions: "",
     temperature: 0.7,
-    avatar: avatar
+    avatar: avatar,
+    aggression: 5,
+    logic: 5,
+    emotion: 5,
+    humor: 5,
+    stubbornness: 5
   };
   
   tempModalState.debaters.push(newDebater);
@@ -1207,6 +1225,13 @@ export function saveSettings() {
   
   if (debateState.moderator.ollamaHost) {
     debateState.ollamaHost = debateState.moderator.ollamaHost;
+  }
+  
+  // Validate Ollama host URLs
+  const ollamaUrlPattern = /^https?:\/\/[a-zA-Z0-9.\-_]+(:\d+)?\/?$/;
+  if (debateState.ollamaHost && !ollamaUrlPattern.test(debateState.ollamaHost)) {
+    alert("Warning: The Ollama Host URL appears invalid. It should be a valid HTTP/HTTPS URL like http://localhost:11434");
+    debateState.ollamaHost = "http://localhost:11434";
   }
   
   saveDebatersToStorage();

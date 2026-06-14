@@ -1,5 +1,42 @@
 // Global State & Storage Helpers Module
 
+// --- Security Helpers ---
+
+// Simple obfuscation for API keys in localStorage (Base64 + reversal).
+// Not encryption — prevents casual snooping and automated key-scraping.
+function obfuscateKey(key) {
+  if (!key) return "";
+  try {
+    return btoa(key.split('').reverse().join(''));
+  } catch (e) {
+    return key;
+  }
+}
+
+export function deobfuscateKey(encoded) {
+  if (!encoded) return "";
+  try {
+    return atob(encoded).split('').reverse().join('');
+  } catch (e) {
+    return encoded;
+  }
+}
+
+// Allowlists for safe property merging from localStorage (prevents prototype pollution)
+const MODERATOR_ALLOWED_KEYS = ['enabled', 'style', 'provider', 'model', 'apiKey', 'instructions', 'customModel', 'ollamaHost'];
+const JUDGE_ALLOWED_KEYS = ['enabled', 'provider', 'model', 'apiKey', 'instructions', 'customModel', 'ollamaHost'];
+const VALID_DEBATE_MODES = ['short', 'medium', 'long', 'advanced', 'twitter', 'podcast', 'socratic', 'humorous'];
+
+function filterAllowedKeys(obj, allowedKeys) {
+  const filtered = {};
+  for (const key of allowedKeys) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      filtered[key] = obj[key];
+    }
+  }
+  return filtered;
+}
+
 export let debateState = {
   active: false,
   paused: false,
@@ -84,7 +121,11 @@ export function loadRoastModeFromStorage() {
 
 export function saveDebatersToStorage() {
   try {
-    localStorage.setItem('ai_debaters_state_v2', JSON.stringify(debateState.debaters));
+    const sanitized = debateState.debaters.map(d => ({
+      ...d,
+      apiKey: obfuscateKey(d.apiKey || "")
+    }));
+    localStorage.setItem('ai_debaters_state_v2', JSON.stringify(sanitized));
   } catch (e) {
     console.warn("Storage writing restricted:", e);
   }
@@ -92,7 +133,8 @@ export function saveDebatersToStorage() {
 
 export function saveModeratorToStorage() {
   try {
-    localStorage.setItem('ai_debate_moderator_v2', JSON.stringify(debateState.moderator));
+    const sanitized = { ...debateState.moderator, apiKey: obfuscateKey(debateState.moderator.apiKey || "") };
+    localStorage.setItem('ai_debate_moderator_v2', JSON.stringify(sanitized));
   } catch (e) {
     console.warn("Storage writing restricted:", e);
   }
@@ -100,7 +142,8 @@ export function saveModeratorToStorage() {
 
 export function saveJudgeToStorage() {
   try {
-    localStorage.setItem('ai_debate_judge_v2', JSON.stringify(debateState.judge));
+    const sanitized = { ...debateState.judge, apiKey: obfuscateKey(debateState.judge.apiKey || "") };
+    localStorage.setItem('ai_debate_judge_v2', JSON.stringify(sanitized));
   } catch (e) {
     console.warn("Storage writing restricted:", e);
   }
@@ -121,6 +164,11 @@ export function loadDebateModeFromStorage() {
     // Map legacy modes to new modes if they exist
     if (savedMode === "formal") savedMode = "medium";
     else if (savedMode === "creative") savedMode = "advanced";
+
+    // Validate against allowed modes
+    if (savedMode && !VALID_DEBATE_MODES.includes(savedMode)) {
+      savedMode = "medium";
+    }
 
     if (savedMode) {
       debateState.debateMode = savedMode;
@@ -165,7 +213,10 @@ export function loadModeratorFromStorage() {
   
   if (savedMod) {
     try {
-      debateState.moderator = { ...debateState.moderator, ...JSON.parse(savedMod) };
+      const parsed = filterAllowedKeys(JSON.parse(savedMod), MODERATOR_ALLOWED_KEYS);
+      // Deobfuscate API key
+      if (parsed.apiKey) parsed.apiKey = deobfuscateKey(parsed.apiKey);
+      debateState.moderator = { ...debateState.moderator, ...parsed };
       if (debateState.moderator.provider === "offline" || debateState.moderator.provider === "mock") {
         debateState.moderator.provider = "gemini";
         debateState.moderator.model = "gemini-3.5-flash";
@@ -194,7 +245,10 @@ export function loadJudgeFromStorage() {
   
   if (savedJudge) {
     try {
-      debateState.judge = { ...debateState.judge, ...JSON.parse(savedJudge) };
+      const parsed = filterAllowedKeys(JSON.parse(savedJudge), JUDGE_ALLOWED_KEYS);
+      // Deobfuscate API key
+      if (parsed.apiKey) parsed.apiKey = deobfuscateKey(parsed.apiKey);
+      debateState.judge = { ...debateState.judge, ...parsed };
       if (debateState.judge.provider === "offline" || debateState.judge.provider === "mock") {
         debateState.judge.provider = "gemini";
         debateState.judge.model = "gemini-3.5-flash";
@@ -213,7 +267,7 @@ export function loadJudgeFromStorage() {
 export function saveRebuttalSettingsToStorage() {
   try {
     const isEnabled = elements.checkRebuttalEnabled ? elements.checkRebuttalEnabled.checked : true;
-    const limit = elements.selectRebuttalLimit ? parseInt(elements.selectRebuttalLimit.value) : 3;
+    const limit = elements.selectRebuttalLimit ? parseInt(elements.selectRebuttalLimit.value, 10) : 3;
     localStorage.setItem('ai_debate_rebuttal_enabled', isEnabled ? 'true' : 'false');
     localStorage.setItem('ai_debate_rebuttal_limit', limit.toString());
   } catch (e) {
@@ -238,7 +292,10 @@ export function loadRebuttalSettingsFromStorage() {
 
     const savedLimit = localStorage.getItem('ai_debate_rebuttal_limit');
     if (savedLimit !== null) {
-      debateState.rebuttalLimit = parseInt(savedLimit);
+      let parsedLimit = parseInt(savedLimit, 10);
+      if (isNaN(parsedLimit) || parsedLimit < 1) parsedLimit = 3;
+      if (parsedLimit > 10) parsedLimit = 10;
+      debateState.rebuttalLimit = parsedLimit;
       if (elements.selectRebuttalLimit) {
         elements.selectRebuttalLimit.value = debateState.rebuttalLimit.toString();
       }

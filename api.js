@@ -3,11 +3,11 @@
 import {
   debateState,
   elements
-} from './state.js?v=8.0';
+} from './state.js?v=9.0';
 
 import {
   renderScorecard
-} from './ui.js?v=8.0';
+} from './ui.js?v=9.0';
 
 // We import compileTranscript at runtime/dynamically to avoid circular dependency
 // or we can import it normally if simulator.js doesn't import api.js directly, 
@@ -24,6 +24,22 @@ function cleanJSONResponse(text) {
     cleaned = cleaned.replace(/^```json/, "").replace(/^```/, "").replace(/```$/, "").trim();
   }
   return cleaned;
+}
+
+// Sanitize error messages to prevent API key leakage in user-facing error cards.
+function sanitizeErrorMessage(message, apiKey) {
+  if (!message) return "Unknown API error";
+  let sanitized = String(message);
+  // Strip any occurrence of the API key from the message
+  if (apiKey && apiKey.length > 8) {
+    sanitized = sanitized.replaceAll(apiKey, '[REDACTED]');
+    // Also check for partial key leaks (first/last 8 chars)
+    const partial = apiKey.substring(0, 8);
+    if (sanitized.includes(partial)) {
+      sanitized = sanitized.replaceAll(partial, '[REDACTED]');
+    }
+  }
+  return sanitized;
 }
 
 function getModeratorInstructions() {
@@ -303,12 +319,35 @@ CRITICAL: Analyze the entire debate transcript carefully. In your summary evalua
     const cleanJSON = cleanJSONResponse(resultString);
     const parsedData = JSON.parse(cleanJSON);
     
+    // Schema validation for judge response
+    if (!parsedData || typeof parsedData !== 'object') {
+      throw new Error("Judge returned invalid data structure.");
+    }
+    if (!['pro', 'con', 'draw'].includes(parsedData.winner)) {
+      parsedData.winner = 'draw';
+      parsedData.winnerName = 'Draw';
+    }
+    if (typeof parsedData.summary !== 'string') {
+      parsedData.summary = String(parsedData.summary || 'No summary provided.');
+    }
+    // Ensure scores are valid numbers
+    if (parsedData.scores) {
+      for (const team of ['pro', 'con']) {
+        if (parsedData.scores[team]) {
+          for (const key of ['logical', 'rhetorical', 'rebuttal', 'reasoning']) {
+            const val = parseInt(parsedData.scores[team][key], 10);
+            parsedData.scores[team][key] = isNaN(val) ? 0 : Math.max(0, Math.min(100, val));
+          }
+        }
+      }
+    }
+    
     renderScorecard(parsedData);
     return `Final Verdict Delivered: Winner is ${parsedData.winnerName}. Rationale: ${parsedData.summary}`;
     
   } catch (error) {
-    console.error("Failed parsing Judge JSON scorecard:", error);
-    throw new Error(`The Judge returned a non-parseable scorecard response. Ensure the judge model is capable of outputting clean JSON. Raw response:\n\n${resultString || error.message}`);
+    console.error("Failed parsing Judge JSON scorecard:", error.message);
+    throw new Error(`The Judge returned a non-parseable scorecard response. Ensure the judge model is capable of outputting clean JSON.`);
   }
 }
 
@@ -338,7 +377,7 @@ async function makeOpenAICompatibleRequest(endpoint, model, apiKey, systemPrompt
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `API Error: Status ${response.status}`);
+    throw new Error(sanitizeErrorMessage(errorData.error?.message || `API Error: Status ${response.status}`, apiKey));
   }
   
   const data = await response.json();
@@ -349,7 +388,7 @@ async function makeOpenAICompatibleRequest(endpoint, model, apiKey, systemPrompt
 
 async function makeGeminiRequest(model, systemPrompt, userPrompt, temperature, apiKey) {
   if (!apiKey) throw new Error("Google Gemini API Key is missing. Click 'Settings' in the header to configure.");
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
   
   const body = {
     contents: [{ role: "user", parts: [{ text: userPrompt }] }],
@@ -373,7 +412,7 @@ async function makeGeminiRequest(model, systemPrompt, userPrompt, temperature, a
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Gemini API Error: Status ${response.status}`);
+    throw new Error(sanitizeErrorMessage(errorData.error?.message || `Gemini API Error: Status ${response.status}`, apiKey));
   }
   const data = await response.json();
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -416,7 +455,7 @@ async function makeOpenRouterRequest(model, systemPrompt, userPrompt, temperatur
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `OpenRouter Error: Status ${response.status}`);
+    throw new Error(sanitizeErrorMessage(errorData.error?.message || `OpenRouter Error: Status ${response.status}`, apiKey));
   }
   const data = await response.json();
   return data.choices?.[0]?.message?.content || "";
@@ -449,7 +488,7 @@ async function makeAnthropicRequest(model, systemPrompt, userPrompt, temperature
   
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.error?.message || `Anthropic Error: Status ${response.status}`);
+    throw new Error(sanitizeErrorMessage(errorData.error?.message || `Anthropic Error: Status ${response.status}`, apiKey));
   }
   const data = await response.json();
   return data.content?.[0]?.text || "";

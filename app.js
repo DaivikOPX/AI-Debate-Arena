@@ -17,7 +17,7 @@ import {
   saveTeamDiscussionToStorage,
   saveRebuttalSettingsToStorage,
   saveThoughtSettingToStorage
-} from './state.js?v=8.0';
+} from './state.js?v=9.0';
 
 import {
   setupInitialDebaters,
@@ -29,7 +29,7 @@ import {
   renderSettingsModal,
   saveSettings,
   updateUIForState
-} from './ui.js?v=8.0';
+} from './ui.js?v=9.0';
 
 import {
   startDebate,
@@ -37,7 +37,7 @@ import {
   stepTurn,
   resetArena,
   exportDebateAsMarkdown
-} from './simulator.js?v=8.0';
+} from './simulator.js?v=9.0';
 
 // Initialize Application Entrypoint
 if (document.readyState === 'loading') {
@@ -180,7 +180,7 @@ function setupEventListeners() {
 
   if (elements.selectRebuttalLimit) {
     elements.selectRebuttalLimit.addEventListener('change', (e) => {
-      debateState.rebuttalLimit = parseInt(e.target.value);
+      debateState.rebuttalLimit = parseInt(e.target.value, 10);
       saveRebuttalSettingsToStorage();
       updateUIForState();
     });
@@ -215,7 +215,12 @@ function setupEventListeners() {
     });
   }
 
-  elements.btnStart.addEventListener('click', startDebate);
+  elements.btnStart.addEventListener('click', () => {
+    // Debounce: prevent double-clicks from firing duplicate starts
+    if (elements.btnStart.disabled || debateState.active) return;
+    elements.btnStart.disabled = true;
+    startDebate();
+  });
   elements.btnPause.addEventListener('click', togglePauseDebate);
   elements.btnStep.addEventListener('click', stepTurn);
   elements.btnReset.addEventListener('click', resetArena);
